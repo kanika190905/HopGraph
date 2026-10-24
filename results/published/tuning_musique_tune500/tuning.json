@@ -1,0 +1,662 @@
+{
+  "config": "configs\\musique_tune500.yaml",
+  "n_questions": 500,
+  "n_passages": 7998,
+  "data_hash": "816d7098256b",
+  "git": {
+    "commit": "5dfca4fbbecca46efbc2dd0991d0fed61823a8af",
+    "dirty": false
+  },
+  "protocol": "Tune baseline and graph hyper-parameters on a TRAIN-derived set, with equal care for both.\n\n    python scripts/tune.py --config configs/musique_tune500.yaml\n\nProtocol (fixed before any tuning result was seen):\n  1. BM25 (k1, b) grid, objective = hybrid R@5 with default RRF.\n  2. RRF (k, dense weight) grid with the chosen BM25, objective = hybrid R@5.\n  3. Cross-encoder depth in {20, 50, 100}: choose the *smallest* depth whose hybrid_ce R@5\n     is within 0.5 points of the best (deeper reranking costs ~linearly more latency).\n  4. Graph grid (alpha, passage-seed beta, passage-seed m, graph RRF weight) on top of the\n     tuned first stage, objective = graph_ce R@5 at the chosen CE depth (graph R@5 also logged).\nTies keep the default. CE scores are cached per (question, passage), so every depth and\nevery graph configuration is scored with the same model outputs.\n\nWrites results/tuning_<name>/tuning.json and configs/frozen/<name>_frozen.yaml (overrides only).\n",
+  "dense_r5": 0.588,
+  "bm25_grid": [
+    {
+      "k1": 0.9,
+      "b": 0.4,
+      "bm25_r5": 0.474,
+      "hybrid_r5": 0.5768333333333334
+    },
+    {
+      "k1": 0.9,
+      "b": 0.6,
+      "bm25_r5": 0.4816666666666667,
+      "hybrid_r5": 0.5875
+    },
+    {
+      "k1": 0.9,
+      "b": 0.75,
+      "bm25_r5": 0.4768333333333334,
+      "hybrid_r5": 0.5918333333333332
+    },
+    {
+      "k1": 0.9,
+      "b": 0.9,
+      "bm25_r5": 0.4706666666666666,
+      "hybrid_r5": 0.583
+    },
+    {
+      "k1": 1.2,
+      "b": 0.4,
+      "bm25_r5": 0.4756666666666667,
+      "hybrid_r5": 0.5785
+    },
+    {
+      "k1": 1.2,
+      "b": 0.6,
+      "bm25_r5": 0.4831666666666667,
+      "hybrid_r5": 0.586
+    },
+    {
+      "k1": 1.2,
+      "b": 0.75,
+      "bm25_r5": 0.48016666666666663,
+      "hybrid_r5": 0.5868333333333332
+    },
+    {
+      "k1": 1.2,
+      "b": 0.9,
+      "bm25_r5": 0.4701666666666667,
+      "hybrid_r5": 0.5835
+    },
+    {
+      "k1": 1.5,
+      "b": 0.4,
+      "bm25_r5": 0.4823333333333334,
+      "hybrid_r5": 0.5818333333333332
+    },
+    {
+      "k1": 1.5,
+      "b": 0.6,
+      "bm25_r5": 0.48466666666666663,
+      "hybrid_r5": 0.5821666666666666
+    },
+    {
+      "k1": 1.5,
+      "b": 0.75,
+      "bm25_r5": 0.4791666666666667,
+      "hybrid_r5": 0.5916666666666667
+    },
+    {
+      "k1": 1.5,
+      "b": 0.9,
+      "bm25_r5": 0.4715,
+      "hybrid_r5": 0.5808333333333333
+    },
+    {
+      "k1": 2.0,
+      "b": 0.4,
+      "bm25_r5": 0.48383333333333334,
+      "hybrid_r5": 0.583
+    },
+    {
+      "k1": 2.0,
+      "b": 0.6,
+      "bm25_r5": 0.48366666666666663,
+      "hybrid_r5": 0.5868333333333333
+    },
+    {
+      "k1": 2.0,
+      "b": 0.75,
+      "bm25_r5": 0.47983333333333333,
+      "hybrid_r5": 0.5846666666666667
+    },
+    {
+      "k1": 2.0,
+      "b": 0.9,
+      "bm25_r5": 0.4686666666666666,
+      "hybrid_r5": 0.5791666666666667
+    }
+  ],
+  "bm25_choice": {
+    "k1": 0.9,
+    "b": 0.75
+  },
+  "rrf_grid": [
+    {
+      "k": 10,
+      "w_dense": 0.5,
+      "hybrid_r5": 0.5463333333333333
+    },
+    {
+      "k": 10,
+      "w_dense": 1.0,
+      "hybrid_r5": 0.6021666666666667
+    },
+    {
+      "k": 10,
+      "w_dense": 1.5,
+      "hybrid_r5": 0.6105
+    },
+    {
+      "k": 10,
+      "w_dense": 2.0,
+      "hybrid_r5": 0.6081666666666667
+    },
+    {
+      "k": 30,
+      "w_dense": 0.5,
+      "hybrid_r5": 0.5666666666666668
+    },
+    {
+      "k": 30,
+      "w_dense": 1.0,
+      "hybrid_r5": 0.5943333333333333
+    },
+    {
+      "k": 30,
+      "w_dense": 1.5,
+      "hybrid_r5": 0.5945
+    },
+    {
+      "k": 30,
+      "w_dense": 2.0,
+      "hybrid_r5": 0.6025
+    },
+    {
+      "k": 60,
+      "w_dense": 0.5,
+      "hybrid_r5": 0.5646666666666668
+    },
+    {
+      "k": 60,
+      "w_dense": 1.0,
+      "hybrid_r5": 0.5918333333333332
+    },
+    {
+      "k": 60,
+      "w_dense": 1.5,
+      "hybrid_r5": 0.5883333333333333
+    },
+    {
+      "k": 60,
+      "w_dense": 2.0,
+      "hybrid_r5": 0.595
+    },
+    {
+      "k": 100,
+      "w_dense": 0.5,
+      "hybrid_r5": 0.5625
+    },
+    {
+      "k": 100,
+      "w_dense": 1.0,
+      "hybrid_r5": 0.5853333333333333
+    },
+    {
+      "k": 100,
+      "w_dense": 1.5,
+      "hybrid_r5": 0.5841666666666666
+    },
+    {
+      "k": 100,
+      "w_dense": 2.0,
+      "hybrid_r5": 0.5925
+    }
+  ],
+  "rrf_choice": {
+    "k": 10,
+    "w_dense": 1.5
+  },
+  "ce_depth_grid": [
+    {
+      "depth": 20,
+      "hybrid_ce_r5": 0.6391666666666668
+    },
+    {
+      "depth": 50,
+      "hybrid_ce_r5": 0.6456666666666667
+    },
+    {
+      "depth": 100,
+      "hybrid_ce_r5": 0.6435
+    }
+  ],
+  "ce_depth_choice": 50,
+  "ce_ms_per_pair": 30.304438853964676,
+  "graph_grid": [
+    {
+      "alpha": 0.5,
+      "beta": 0.25,
+      "m": 3,
+      "graph_weight": 0.5,
+      "graph_r5": 0.667,
+      "graph_ce_r5": 0.6451666666666668
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.25,
+      "m": 3,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6756666666666667,
+      "graph_ce_r5": 0.6505
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.25,
+      "m": 3,
+      "graph_weight": 2.0,
+      "graph_r5": 0.674,
+      "graph_ce_r5": 0.6968333333333333
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.25,
+      "m": 5,
+      "graph_weight": 0.5,
+      "graph_r5": 0.621,
+      "graph_ce_r5": 0.6441666666666668
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.25,
+      "m": 5,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6261666666666666,
+      "graph_ce_r5": 0.6495
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.25,
+      "m": 5,
+      "graph_weight": 2.0,
+      "graph_r5": 0.6298333333333332,
+      "graph_ce_r5": 0.6796666666666666
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.25,
+      "m": 10,
+      "graph_weight": 0.5,
+      "graph_r5": 0.6271666666666667,
+      "graph_ce_r5": 0.6441666666666668
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.25,
+      "m": 10,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6313333333333333,
+      "graph_ce_r5": 0.6505
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.25,
+      "m": 10,
+      "graph_weight": 2.0,
+      "graph_r5": 0.64,
+      "graph_ce_r5": 0.6691666666666666
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.5,
+      "m": 3,
+      "graph_weight": 0.5,
+      "graph_r5": 0.6633333333333332,
+      "graph_ce_r5": 0.6451666666666668
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.5,
+      "m": 3,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6661666666666666,
+      "graph_ce_r5": 0.651
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.5,
+      "m": 3,
+      "graph_weight": 2.0,
+      "graph_r5": 0.6745,
+      "graph_ce_r5": 0.689
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.5,
+      "m": 5,
+      "graph_weight": 0.5,
+      "graph_r5": 0.6178333333333332,
+      "graph_ce_r5": 0.6451666666666668
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.5,
+      "m": 5,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6195,
+      "graph_ce_r5": 0.6505
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.5,
+      "m": 5,
+      "graph_weight": 2.0,
+      "graph_r5": 0.6243333333333333,
+      "graph_ce_r5": 0.675
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.5,
+      "m": 10,
+      "graph_weight": 0.5,
+      "graph_r5": 0.6196666666666666,
+      "graph_ce_r5": 0.6441666666666668
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.5,
+      "m": 10,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6278333333333332,
+      "graph_ce_r5": 0.6505
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.5,
+      "m": 10,
+      "graph_weight": 2.0,
+      "graph_r5": 0.6353333333333334,
+      "graph_ce_r5": 0.6661666666666666
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.75,
+      "m": 3,
+      "graph_weight": 0.5,
+      "graph_r5": 0.6581666666666667,
+      "graph_ce_r5": 0.6456666666666667
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.75,
+      "m": 3,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6615,
+      "graph_ce_r5": 0.6498333333333334
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.75,
+      "m": 3,
+      "graph_weight": 2.0,
+      "graph_r5": 0.6656666666666667,
+      "graph_ce_r5": 0.6838333333333334
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.75,
+      "m": 5,
+      "graph_weight": 0.5,
+      "graph_r5": 0.6105,
+      "graph_ce_r5": 0.6456666666666667
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.75,
+      "m": 5,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6105,
+      "graph_ce_r5": 0.6503333333333333
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.75,
+      "m": 5,
+      "graph_weight": 2.0,
+      "graph_r5": 0.6105,
+      "graph_ce_r5": 0.6738333333333334
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.75,
+      "m": 10,
+      "graph_weight": 0.5,
+      "graph_r5": 0.6195,
+      "graph_ce_r5": 0.6446666666666667
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.75,
+      "m": 10,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6205,
+      "graph_ce_r5": 0.6473333333333333
+    },
+    {
+      "alpha": 0.5,
+      "beta": 0.75,
+      "m": 10,
+      "graph_weight": 2.0,
+      "graph_r5": 0.6238333333333332,
+      "graph_ce_r5": 0.663
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.25,
+      "m": 3,
+      "graph_weight": 0.5,
+      "graph_r5": 0.677,
+      "graph_ce_r5": 0.6441666666666668
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.25,
+      "m": 3,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6766666666666665,
+      "graph_ce_r5": 0.6488333333333334
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.25,
+      "m": 3,
+      "graph_weight": 2.0,
+      "graph_r5": 0.6731666666666666,
+      "graph_ce_r5": 0.698
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.25,
+      "m": 5,
+      "graph_weight": 0.5,
+      "graph_r5": 0.6246666666666666,
+      "graph_ce_r5": 0.6441666666666668
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.25,
+      "m": 5,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6301666666666667,
+      "graph_ce_r5": 0.6483333333333333
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.25,
+      "m": 5,
+      "graph_weight": 2.0,
+      "graph_r5": 0.6373333333333334,
+      "graph_ce_r5": 0.681
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.25,
+      "m": 10,
+      "graph_weight": 0.5,
+      "graph_r5": 0.6328333333333334,
+      "graph_ce_r5": 0.6441666666666668
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.25,
+      "m": 10,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6385,
+      "graph_ce_r5": 0.6488333333333334
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.25,
+      "m": 10,
+      "graph_weight": 2.0,
+      "graph_r5": 0.6413333333333333,
+      "graph_ce_r5": 0.6675
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.5,
+      "m": 3,
+      "graph_weight": 0.5,
+      "graph_r5": 0.6666666666666666,
+      "graph_ce_r5": 0.6446666666666667
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.5,
+      "m": 3,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6728333333333333,
+      "graph_ce_r5": 0.6493333333333333
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.5,
+      "m": 3,
+      "graph_weight": 2.0,
+      "graph_r5": 0.6718333333333333,
+      "graph_ce_r5": 0.6891666666666667
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.5,
+      "m": 5,
+      "graph_weight": 0.5,
+      "graph_r5": 0.619,
+      "graph_ce_r5": 0.6446666666666667
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.5,
+      "m": 5,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6238333333333332,
+      "graph_ce_r5": 0.6488333333333334
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.5,
+      "m": 5,
+      "graph_weight": 2.0,
+      "graph_r5": 0.629,
+      "graph_ce_r5": 0.6763333333333332
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.5,
+      "m": 10,
+      "graph_weight": 0.5,
+      "graph_r5": 0.6216666666666666,
+      "graph_ce_r5": 0.6446666666666667
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.5,
+      "m": 10,
+      "graph_weight": 1.0,
+      "graph_r5": 0.629,
+      "graph_ce_r5": 0.6493333333333333
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.5,
+      "m": 10,
+      "graph_weight": 2.0,
+      "graph_r5": 0.6359999999999999,
+      "graph_ce_r5": 0.6681666666666666
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.75,
+      "m": 3,
+      "graph_weight": 0.5,
+      "graph_r5": 0.6618333333333333,
+      "graph_ce_r5": 0.6446666666666667
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.75,
+      "m": 3,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6685,
+      "graph_ce_r5": 0.6473333333333333
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.75,
+      "m": 3,
+      "graph_weight": 2.0,
+      "graph_r5": 0.6633333333333333,
+      "graph_ce_r5": 0.6833333333333333
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.75,
+      "m": 5,
+      "graph_weight": 0.5,
+      "graph_r5": 0.6156666666666666,
+      "graph_ce_r5": 0.6446666666666667
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.75,
+      "m": 5,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6183333333333333,
+      "graph_ce_r5": 0.6478333333333334
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.75,
+      "m": 5,
+      "graph_weight": 2.0,
+      "graph_r5": 0.6205,
+      "graph_ce_r5": 0.6716666666666666
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.75,
+      "m": 10,
+      "graph_weight": 0.5,
+      "graph_r5": 0.6216666666666666,
+      "graph_ce_r5": 0.6446666666666667
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.75,
+      "m": 10,
+      "graph_weight": 1.0,
+      "graph_r5": 0.6255,
+      "graph_ce_r5": 0.6483333333333333
+    },
+    {
+      "alpha": 0.85,
+      "beta": 0.75,
+      "m": 10,
+      "graph_weight": 2.0,
+      "graph_r5": 0.6275,
+      "graph_ce_r5": 0.6645
+    }
+  ],
+  "graph_choice": {
+    "alpha": 0.85,
+    "beta": 0.25,
+    "m": 3,
+    "graph_weight": 2.0,
+    "graph_r5": 0.6731666666666666,
+    "graph_ce_r5": 0.698
+  },
+  "hybrid_ce_r5_at_choice": 0.6456666666666667,
+  "peak_rss_mb": 1544.9,
+  "seconds": 2943.9,
+  "ce_pairs_scored": 83866
+}

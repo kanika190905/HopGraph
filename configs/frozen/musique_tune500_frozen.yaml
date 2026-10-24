@@ -1,0 +1,20 @@
+# Selected on musique_tune500 (train) by scripts/tune.py; see results\tuning_musique_tune500\tuning.json
+bm25:
+  k1: 0.9
+  b: 0.75
+fusion:
+  k: 10
+  weights:
+  - 1.0
+  - 1.5
+rerank:
+  depth: 50
+ppr:
+  alpha: 0.85
+seeding:
+  passage_seed_beta: 0.25
+  passage_seed_m: 3
+graph_fusion:
+  weights:
+  - 1.0
+  - 2.0
