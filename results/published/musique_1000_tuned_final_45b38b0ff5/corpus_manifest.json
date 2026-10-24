@@ -1,0 +1,38 @@
+{
+  "dataset": "musique",
+  "split": "dev",
+  "source_file": "musique_ans_v1.0_dev.jsonl",
+  "source_sha256": "15fa63794d18a94ce12411aca6e2327e65b6e83b0b1490efab3f1962e48abf3b",
+  "source_version": "MuSiQue v1.0 (musique_ans), HF mirror dgslibisey/MuSiQue@c8f4f8c9",
+  "preprocessing": {
+    "n_questions": 1000,
+    "sample_seed": 0,
+    "dedupe": "sha1(normalize(title) + '\\n' + normalize(text)); normalize = NFKC, collapse whitespace, lowercase",
+    "max_skip_frac": 0.01
+  },
+  "counts": {
+    "records": 2417,
+    "skipped": 0,
+    "skip_reasons": {},
+    "questions": 1000,
+    "candidates": 19989,
+    "passages": 11524,
+    "duplicates_merged": 8465,
+    "gold_passages": 2660,
+    "hops": {
+      "2": 518,
+      "3": 304,
+      "4": 178
+    },
+    "hop_types": {
+      "2hop": 518,
+      "3hop1": 230,
+      "3hop2": 74,
+      "4hop1": 106,
+      "4hop2": 36,
+      "4hop3": 36
+    }
+  },
+  "corpus_hash": "bdf899184f55",
+  "build_seconds": 0.557
+}

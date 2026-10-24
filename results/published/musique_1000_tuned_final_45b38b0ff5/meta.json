@@ -1,0 +1,52 @@
+{
+  "run_id": "45b38b0ff5",
+  "name": "musique_1000_tuned_final",
+  "config_hash": "96aef1f6db12",
+  "data_hash": "bdf899184f55",
+  "git": {
+    "commit": "47d9ac5c4fce9aa7410f0f7aa6822cbd20dd1a29",
+    "dirty": false
+  },
+  "systems": [
+    "bm25",
+    "dense",
+    "hybrid",
+    "hybrid_ce",
+    "graph",
+    "graph_only",
+    "graph_ce"
+  ],
+  "ks": [
+    2,
+    5,
+    10
+  ],
+  "n_questions": 1000,
+  "n_passages": 11524,
+  "threads": {
+    "OMP_NUM_THREADS": 8,
+    "MKL_NUM_THREADS": 8,
+    "OPENBLAS_NUM_THREADS": 8,
+    "NUMEXPR_NUM_THREADS": 8,
+    "torch_threads": 8,
+    "faiss_threads": 8
+  },
+  "overrides": [],
+  "bootstrap_n": 10000,
+  "bootstrap_seed": 0,
+  "started": "2026-10-25T00:23:13",
+  "load_seconds": {
+    "encoder_load_s": 6.062,
+    "index_load_s": 0.094,
+    "reranker_load_s": 0.117,
+    "graph_load_s": 0.561
+  },
+  "rss_after_load_mb": 1002.3,
+  "quality_pass_seconds": 3088.85,
+  "latency_pass_seconds": 3139.52,
+  "latency_n": 200,
+  "latency_repeats": 5,
+  "warmup": 10,
+  "peak_rss_mb": 1462.1,
+  "finished": "2026-10-25T02:07:37"
+}

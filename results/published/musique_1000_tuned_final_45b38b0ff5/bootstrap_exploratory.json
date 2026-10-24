@@ -1,0 +1,181 @@
+{
+  "note": "exploratory / not pre-registered; unadjusted",
+  "n_all": 1000,
+  "n_fresh": 800,
+  "all:graph_ce-hybrid_ce:recall@5": {
+    "mean_a": 0.5983333333333334,
+    "mean_b": 0.55925,
+    "diff": 0.03908333333333333,
+    "ci_low": 0.027666666666666666,
+    "ci_high": 0.05025,
+    "p_value": 0.00019998000199980003,
+    "n": 1000,
+    "n_resamples": 10000,
+    "seed": 0
+  },
+  "all:graph_ce-hybrid_ce:allgold@5": {
+    "mean_a": 0.27,
+    "mean_b": 0.209,
+    "diff": 0.061,
+    "ci_low": 0.043,
+    "ci_high": 0.079,
+    "p_value": 0.00019998000199980003,
+    "n": 1000,
+    "n_resamples": 10000,
+    "seed": 0
+  },
+  "all:graph-hybrid:recall@5": {
+    "mean_a": 0.5844166666666667,
+    "mean_b": 0.5185833333333334,
+    "diff": 0.06583333333333333,
+    "ci_low": 0.05258333333333333,
+    "ci_high": 0.07891666666666666,
+    "p_value": 0.00019998000199980003,
+    "n": 1000,
+    "n_resamples": 10000,
+    "seed": 0
+  },
+  "all:graph-hybrid:allgold@5": {
+    "mean_a": 0.24,
+    "mean_b": 0.17,
+    "diff": 0.07,
+    "ci_low": 0.048,
+    "ci_high": 0.091,
+    "p_value": 0.00019998000199980003,
+    "n": 1000,
+    "n_resamples": 10000,
+    "seed": 0
+  },
+  "all:graph-hybrid_ce:recall@5": {
+    "mean_a": 0.5844166666666667,
+    "mean_b": 0.55925,
+    "diff": 0.025166666666666664,
+    "ci_low": 0.010833333333333332,
+    "ci_high": 0.03925,
+    "p_value": 0.00039996000399960006,
+    "n": 1000,
+    "n_resamples": 10000,
+    "seed": 0
+  },
+  "all:graph-hybrid_ce:allgold@5": {
+    "mean_a": 0.24,
+    "mean_b": 0.209,
+    "diff": 0.031,
+    "ci_low": 0.007,
+    "ci_high": 0.054024999999999636,
+    "p_value": 0.0105989401059894,
+    "n": 1000,
+    "n_resamples": 10000,
+    "seed": 0
+  },
+  "all:graph_ce-graph:recall@5": {
+    "mean_a": 0.5983333333333334,
+    "mean_b": 0.5844166666666667,
+    "diff": 0.013916666666666666,
+    "ci_low": 0.0010833333333333348,
+    "ci_high": 0.02666666666666667,
+    "p_value": 0.032596740325967405,
+    "n": 1000,
+    "n_resamples": 10000,
+    "seed": 0
+  },
+  "all:graph_ce-graph:allgold@5": {
+    "mean_a": 0.27,
+    "mean_b": 0.24,
+    "diff": 0.03,
+    "ci_low": 0.009,
+    "ci_high": 0.051,
+    "p_value": 0.006199380061993801,
+    "n": 1000,
+    "n_resamples": 10000,
+    "seed": 0
+  },
+  "fresh800:graph_ce-hybrid_ce:recall@5": {
+    "mean_a": 0.6071875,
+    "mean_b": 0.5671875,
+    "diff": 0.04,
+    "ci_low": 0.0275,
+    "ci_high": 0.052708333333333336,
+    "p_value": 0.00019998000199980003,
+    "n": 800,
+    "n_resamples": 10000,
+    "seed": 0
+  },
+  "fresh800:graph_ce-hybrid_ce:allgold@5": {
+    "mean_a": 0.28375,
+    "mean_b": 0.21625,
+    "diff": 0.0675,
+    "ci_low": 0.0475,
+    "ci_high": 0.08875,
+    "p_value": 0.00019998000199980003,
+    "n": 800,
+    "n_resamples": 10000,
+    "seed": 0
+  },
+  "fresh800:graph-hybrid:recall@5": {
+    "mean_a": 0.5888541666666667,
+    "mean_b": 0.5242708333333332,
+    "diff": 0.06458333333333333,
+    "ci_low": 0.04958333333333333,
+    "ci_high": 0.07958593749999997,
+    "p_value": 0.00019998000199980003,
+    "n": 800,
+    "n_resamples": 10000,
+    "seed": 0
+  },
+  "fresh800:graph-hybrid:allgold@5": {
+    "mean_a": 0.25125,
+    "mean_b": 0.17375,
+    "diff": 0.0775,
+    "ci_low": 0.05375,
+    "ci_high": 0.10125,
+    "p_value": 0.00019998000199980003,
+    "n": 800,
+    "n_resamples": 10000,
+    "seed": 0
+  },
+  "fresh800:graph-hybrid_ce:recall@5": {
+    "mean_a": 0.5888541666666667,
+    "mean_b": 0.5671875,
+    "diff": 0.021666666666666664,
+    "ci_low": 0.005833333333333334,
+    "ci_high": 0.03791666666666667,
+    "p_value": 0.007999200079992,
+    "n": 800,
+    "n_resamples": 10000,
+    "seed": 0
+  },
+  "fresh800:graph-hybrid_ce:allgold@5": {
+    "mean_a": 0.25125,
+    "mean_b": 0.21625,
+    "diff": 0.035,
+    "ci_low": 0.00875,
+    "ci_high": 0.06125,
+    "p_value": 0.008799120087991202,
+    "n": 800,
+    "n_resamples": 10000,
+    "seed": 0
+  },
+  "fresh800:graph_ce-graph:recall@5": {
+    "mean_a": 0.6071875,
+    "mean_b": 0.5888541666666667,
+    "diff": 0.018333333333333333,
+    "ci_low": 0.0034375000000000013,
+    "ci_high": 0.0328125,
+    "p_value": 0.013598640135986401,
+    "n": 800,
+    "n_resamples": 10000,
+    "seed": 0
+  },
+  "fresh800:graph_ce-graph:allgold@5": {
+    "mean_a": 0.28375,
+    "mean_b": 0.25125,
+    "diff": 0.0325,
+    "ci_low": 0.00875,
+    "ci_high": 0.05625,
+    "p_value": 0.007599240075992401,
+    "n": 800,
+    "n_resamples": 10000,
+    "seed": 0
+  }
+}
