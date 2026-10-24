@@ -17,12 +17,10 @@ import sys
 import time
 from pathlib import Path
 
-import yaml
-
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from hopgraph.artifacts import bm25_dir, dense_dir, entity_emb_path, graph_dir  # noqa: E402
-from hopgraph.config import load_config, save_config  # noqa: E402
+from hopgraph.config import load_config, parse_overrides, save_config  # noqa: E402
 from hopgraph.evaluation.memory import RSSMonitor  # noqa: E402
 from hopgraph.evaluation.metrics import evaluate_ranking  # noqa: E402
 from hopgraph.evaluation.report import analyze  # noqa: E402
@@ -33,14 +31,6 @@ from hopgraph.runinfo import environment, git_commit, run_id, setup_logging  # n
 
 log = logging.getLogger("run_eval")
 SAVE_TOP = 20  # ranked IDs stored per system per query (gold ranks are stored to depth 100)
-
-
-def parse_sets(pairs: list[str]) -> dict:
-    out = {}
-    for p in pairs:
-        key, _, val = p.partition("=")
-        out[key] = yaml.safe_load(val)
-    return out
 
 
 def build_pipeline(cfg, passages, systems):
@@ -104,7 +94,7 @@ def main() -> None:
     ap.add_argument("--no-latency", action="store_true")
     args = ap.parse_args()
 
-    cfg = load_config(args.config, parse_sets(args.set))
+    cfg = load_config(args.config, parse_overrides(args.set))
     systems = cfg.eval.systems
     threads = pin_threads(cfg.eval.threads)
     passages, questions = load_corpus(cfg.paths.processed_dir)

@@ -17,7 +17,7 @@ import numpy as np
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from hopgraph.artifacts import entity_emb_path, graph_dir, mentions_path  # noqa: E402
-from hopgraph.config import load_config  # noqa: E402
+from hopgraph.config import load_config, parse_overrides  # noqa: E402
 from hopgraph.evaluation.memory import RSSMonitor  # noqa: E402
 from hopgraph.evaluation.timing import pin_threads  # noqa: E402
 from hopgraph.graph.build import (  # noqa: E402
@@ -41,8 +41,9 @@ log = logging.getLogger("build_graph")
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", required=True)
+    ap.add_argument("--set", nargs="*", default=[], help="dotted overrides, e.g. graph.synonym_tau=0.85")
     args = ap.parse_args()
-    cfg = load_config(args.config)
+    cfg = load_config(args.config, parse_overrides(args.set))
     setup_logging(cfg.name)
     threads = pin_threads(cfg.eval.threads)
     gcfg = cfg.graph

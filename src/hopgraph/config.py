@@ -231,6 +231,17 @@ def load_config(path: str | Path, overrides: dict[str, Any] | None = None) -> Co
     return cfg
 
 
+def parse_overrides(pairs: list[str]) -> dict[str, Any]:
+    """``["ppr.alpha=0.5", "eval.systems=[hybrid,graph]"]`` -> dotted-key dict (YAML-typed values)."""
+    out: dict[str, Any] = {}
+    for p in pairs:
+        key, sep, val = p.partition("=")
+        if not sep or not key:
+            raise ConfigError(f"override {p!r} must look like section.key=value")
+        out[key] = yaml.safe_load(val)
+    return out
+
+
 def config_from_dict(raw: dict[str, Any]) -> Config:
     cfg: Config = _build(Config, raw, "config")
     validate(cfg)
