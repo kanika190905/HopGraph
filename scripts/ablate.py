@@ -51,7 +51,10 @@ SYSTEMS = "eval.systems=[hybrid,graph,graph_only]"
 
 def run(args: list[str]) -> str:
     print("+", " ".join(args), flush=True)
-    out = subprocess.run([sys.executable, *args], cwd=ROOT, check=True, capture_output=True, text=True)
+    out = subprocess.run([sys.executable, *args], cwd=ROOT, capture_output=True, text=True)
+    if out.returncode != 0:
+        sys.stderr.write(out.stdout[-4000:] + "\n" + out.stderr[-4000:])
+        raise SystemExit(f"step failed ({out.returncode}): {' '.join(args)}")
     return out.stdout.strip().splitlines()[-1] if out.stdout.strip() else ""
 
 
@@ -66,6 +69,7 @@ def main() -> None:
     out_dir = ROOT / cfg.paths.results_dir / f"ablations_{cfg.name}"
     out_dir.mkdir(parents=True, exist_ok=True)
     names = a.only or list(VARIANTS)
+    run(["scripts/build_bm25.py", "--config", a.config])  # tuned BM25 params need their own index
     run_dirs: dict[str, str] = {}
     for name in names:
         sets = VARIANTS[name]
