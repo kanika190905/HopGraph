@@ -10,20 +10,33 @@
 HopGraph is an **information-retrieval** project. It returns ranked evidence passages and
 evaluates them against gold supporting passages. It does **not** generate answers.
 
-**Status: Gate 1 retested; Week-2 tuning in progress (2026-10-24).** Baselines, the graph
-retriever and the evaluation harness work and are tested. With **untuned** defaults on 1,000
-MuSiQue dev questions, the graph + cross-encoder pipeline beats hybrid + cross-encoder by
-**+2.4 Recall@5 (95% CI [+1.6, +3.3])**. That is reliable, but below the pre-registered +3
-"Go" bar, so the next step is to check whether the gain survives fair baseline tuning. See
-[`docs/day3_decision.md`](docs/day3_decision.md). Nothing here is a final result.
+**Status (2026-10-25): Gate 1 passed on MuSiQue; 2WikiMultiHopQA and ablations pending.**
+All systems were tuned on 500 MuSiQue **train** questions and then evaluated once on 1,000
+**dev** questions:
+
+| | Recall@5 | AllGold@5 | mean latency (CPU) |
+|---|---|---|---|
+| Hybrid (BM25 + dense, RRF) | 51.9 | 17.0 | 20 ms |
+| Hybrid + cross-encoder (top 50) | 55.9 | 20.9 | 1,416 ms |
+| **Graph-fused** (+ spaCy entity graph, PPR) | **58.4** | 24.0 | **65 ms** |
+| Graph-fused + cross-encoder | **59.8** | **27.0** | 1,739 ms |
+
+The pre-registered headline, graph + cross-encoder minus hybrid + cross-encoder, is
+**+3.9 Recall@5 (95% CI [+2.8, +5.0])**. Graph-fused retrieval *without* a reranker also
+beats the tuned reranker pipeline (+2.5 [+1.1, +3.9]) at 1/22 of the latency, but that
+comparison was not pre-registered. See [`docs/results.md`](docs/results.md), and
+[`docs/day3_decision.md`](docs/day3_decision.md) for how the decision evolved from the
+200-question spike. These are retrieval metrics on one dataset; answer quality was not measured.
+
+![Recall@5 vs latency](results/published/musique_1000_tuned_final_45b38b0ff5/recall_vs_latency.png)
 
 ## What is (and is not) new
 
 Graph retrieval with Personalized PageRank (HippoRAG, HippoRAG 2), LLM-free graph RAG
-(TIGRAG), routing between vanilla and graph RAG (EA-GraphRAG, R²Adapter, SkewRoute), and
+(TIGRAG), routing between vanilla and graph RAG (EA-GraphRAG, RÂ²Adapter, SkewRoute), and
 retrieval-gain-labelled routers (Per-Query Gating of LLM Rerankers) are all **prior work**;
 see [`docs/novelty_review.md`](docs/novelty_review.md). HopGraph's contribution is an
-**engineering study**: a HippoRAG-2-style entity–passage graph built with spaCy NER instead
+**engineering study**: a HippoRAG-2-style entityâ€“passage graph built with spaCy NER instead
 of an LLM, compared at retrieval level against a strong BM25 + dense + RRF + cross-encoder
 baseline, with paired bootstrap intervals, per-stage latency, peak RAM and an
 oracle-routing upper bound, all on a 16 GB CPU laptop.
@@ -35,10 +48,10 @@ oracle-routing upper bound, all on a 16 GB CPU laptop.
 | `bm25` | bm25s (k1 = 1.5, b = 0.75, Snowball stemming, English stop words) |
 | `dense` | BGE-small-en-v1.5 + FAISS `IndexFlatIP` (exact cosine) |
 | `hybrid` | RRF(BM25, dense), k = 60 |
-| `hybrid_ce` | hybrid → MiniLM-L6 cross-encoder over the top 20 |
-| `graph_only` | link query entities → seed PPR (entities × specificity + top-5 hybrid passages) → rank passage nodes |
+| `hybrid_ce` | hybrid â†’ MiniLM-L6 cross-encoder over the top 20 |
+| `graph_only` | link query entities â†’ seed PPR (entities Ã— specificity + top-5 hybrid passages) â†’ rank passage nodes |
 | `graph` | RRF(hybrid, graph_only) |
-| `graph_ce` | graph → cross-encoder over the top 20 |
+| `graph_ce` | graph â†’ cross-encoder over the top 20 |
 
 ## Setup (Windows PowerShell, CPU only)
 
@@ -54,18 +67,34 @@ The lock file pins the CPU-only PyTorch build (`--extra-index-url https://downlo
 and the spaCy `en_core_web_sm` 3.8.0 wheel. The models download on first use: BGE-small
 ~127 MB, MiniLM cross-encoder ~87 MB, spaCy ~13 MB.
 
-## Reproduce the Day-3 spike
+## Reproduce
+
+Quick check: the Day-3 spike on 200 questions takes about 35 minutes.
 
 ```powershell
 $py = ".\.venv\Scripts\python.exe"
 & $py scripts\download_data.py musique_dev                        # 30 MB, SHA-256 verified
-& $py scripts\build_corpus.py --config configs\musique_200.yaml   # passages/questions/manifest
-& $py scripts\build_bm25.py   --config configs\musique_200.yaml
-& $py scripts\embed.py        --config configs\musique_200.yaml   # ~2 min on 8 cores
-& $py scripts\build_graph.py  --config configs\musique_200.yaml   # spaCy NER + CSR graph
-& $py scripts\run_eval.py     --config configs\musique_200.yaml --tag day3
+& $py scripts\tasks.py reproduce --config configs\musique_200.yaml --tag day3
 & $py -m pytest -q                                                # no model downloads needed
 ```
+
+Headline result: tune on train, then evaluate once on dev-1,000. Allow about 5 hours on 8
+cores, most of it cross-encoder scoring.
+
+```powershell
+& $py scripts\download_data.py musique_train                      # 241 MB, SHA-256 verified
+foreach ($c in "configs\musique_tune500.yaml", "configs\musique_1000.yaml") {
+  & $py scripts\build_corpus.py --config $c; & $py scripts\embed.py --config $c; & $py scripts\build_graph.py --config $c
+}
+& $py scripts\tune.py --config configs\musique_tune500.yaml       # writes configs\frozen\musique_tune500_frozen.yaml
+& $py scripts\build_bm25.py --config configs\musique_1000_tuned.yaml
+& $py scripts\run_eval.py   --config configs\musique_1000_tuned.yaml --tag final
+& $py scripts\make_plots.py results\<run dir>
+```
+
+`configs/musique_1000_tuned.yaml` is `musique_1000.yaml` with the frozen overrides merged in.
+2WikiMultiHopQA (`configs/twowiki_1000.yaml`) needs the official `data.zip` (246 MB, linked
+from the Alab-NII/2wikimultihop README); extract `data/dev.json` to `data/raw/2wiki/dev.json`.
 
 Each run writes `results/<name>_<run_id>/` containing the exact config, Git commit,
 corpus hash, environment, per-query JSONL (ranked IDs, metrics, stage timings, linking
@@ -77,10 +106,10 @@ them produces a new directory.
 
 ```
 src/hopgraph/   ingestion/  retrieval/  graph/  evaluation/  pipeline.py  config.py
-scripts/        download_data, build_corpus, build_bm25, embed, build_graph, run_eval
+scripts/        download_data, build_corpus, build_bm25, embed, build_graph, run_eval, tune, make_plots, error_analysis, tasks
 configs/        one YAML per experiment (unknown keys are errors)
-tests/          73 tests, including PPR vs NetworkX and end-to-end on a hand-labelled corpus
-docs/           novelty_review, foundations, day3_decision, CHECKLIST, THIRD_PARTY
+tests/          78 tests (incl. PPR vs NetworkX, end-to-end on a hand-labelled corpus); CI runs them without torch
+docs/           results, day3_decision, tuning, novelty_review, foundations, architecture, adr/, CHECKLIST, THIRD_PARTY
 ```
 
 ## Data and licenses

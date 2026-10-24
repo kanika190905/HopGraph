@@ -202,7 +202,14 @@ untuned baseline that holds on the 800 fresh questions. It did not reach the pre
    apply the pivot rule: try one synonym-edge or seeding fix on tuning data, add 2Wiki, then
    pivot if it still fails.
 
-**Gate 2 early read.** The graph stage costs about 46 ms per query, which is 6% of the
+### Update after Week-2 tuning (2026-10-25): **Go**
+
+The tuned, train-frozen re-evaluation on the same 1,000 dev questions gives
+**graph_ce − hybrid_ce = +3.9 [+2.8, +5.0]** (Holm p = 0.0006), and +4.0 [+2.8, +5.3] on the 800 fresh
+questions. That clears the pre-registered Go bar against a baseline tuned with the same protocol.
+Details and caveats are in [`results.md`](results.md); the tuning record is in [`tuning.md`](tuning.md).
+
+**Gate 2 early read (untuned run).** The graph stage costs about 46 ms per query, which is 6% of the
 reranked pipeline's latency. Selective routing can therefore save at most about 12% (88 ms) in
 the configuration that actually benefits from the graph. That is below the 20% bar, so a
 learned router looks unlikely to be worth building. The formal check is in Week 3.
