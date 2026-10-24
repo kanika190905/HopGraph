@@ -116,6 +116,17 @@ mean 82.3). Longer passages mention more entities, so they have more edges, and
 PageRank-style walks favour high-degree nodes. This is a measured correlation, not a
 verified cause. A degree-normalized passage score is a pending ablation.
 
+## Ablations (train tuning set, graph without the cross-encoder)
+
+Single-change ablations against the tuned reference (graph R@5 67.3 on 500 train questions).
+The full table and interpretation are in [`error_analysis.md`](error_analysis.md) §5.
+Removing entity seeds costs −4.9 [−6.7, −3.2], so the entity graph carries the effect.
+Passage seeds (−2.6), passage-node scoring (−1.9 vs entity-sum), title entities (−1.3) and NER
+linking (−1.0) all help. Synonym edges, DATE entities and label-aware keys show no reliable
+effect. Two changes **improve** on the reference: removing the n-gram linker (+1.5 [+0.2, +2.9])
+and count mention weights (+1.6 [+0.5, +2.7]). They are candidates for a v2 configuration,
+which must be confirmed on train and then evaluated once on held-out dev questions.
+
 ## Limitations
 
 - Results so far cover one dataset (MuSiQue) and 1,000 dev questions. The dev set is also where HippoRAG-style papers report results, and MuSiQue's test labels are not public.

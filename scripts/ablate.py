@@ -51,7 +51,8 @@ SYSTEMS = "eval.systems=[hybrid,graph,graph_only]"
 
 def run(args: list[str]) -> str:
     print("+", " ".join(args), flush=True)
-    out = subprocess.run([sys.executable, *args], cwd=ROOT, capture_output=True, text=True)
+    out = subprocess.run([sys.executable, *args], cwd=ROOT, capture_output=True, text=True,
+                         encoding="utf-8", errors="replace")
     if out.returncode != 0:
         sys.stderr.write(out.stdout[-4000:] + "\n" + out.stderr[-4000:])
         raise SystemExit(f"step failed ({out.returncode}): {' '.join(args)}")

@@ -1,0 +1,16 @@
+variant,overrides,run,hybrid_recall@5,hybrid_recall@10,hybrid_allgold@5,graph_recall@5,graph_recall@10,graph_allgold@5,graph_only_recall@5,graph_only_recall@10,graph_only_allgold@5,frac_no_entity,mean_linked_entities,d_graph_r5,ci_low,ci_high,p
+reference,,results\musique_tune500_tuned_abl_reference_91ac536864,61.05,70.52,29.8,67.32,77.72,39.8,61.45,71.88,31.4,0.0,3.072,,,,
+no_specificity,seeding.use_specificity=false,results\musique_tune500_tuned_abl_no_specificity_fe62733075,61.05,70.52,29.8,66.6,76.83,38.4,61.08,71.02,30.2,0.0,3.072,-0.72,-1.47,-0.02,0.0484
+no_passage_seeds,seeding.passage_seed_m=0,results\musique_tune500_tuned_abl_no_passage_seeds_f8aefdac8b,61.05,70.52,29.8,64.73,71.9,39.8,50.48,59.17,18.8,0.0,3.072,-2.58,-4.83,-0.35,0.0204
+no_entity_seeds,linking.use_ner=false; linking.use_ngram=false; linking.embed_tau=null; linking.use_noun_chunks=false,results\musique_tune500_tuned_abl_no_entity_seeds_1994987ab4,61.05,70.52,29.8,62.43,73.97,34.0,60.07,68.75,30.2,1.0,0.0,-4.88,-6.65,-3.15,0.0002
+no_ner_linking,linking.use_ner=false,results\musique_tune500_tuned_abl_no_ner_linking_ecc08fbcc5,61.05,70.52,29.8,66.33,76.22,39.0,60.23,69.82,31.0,0.0,2.78,-0.98,-1.57,-0.48,0.0002
+no_ngram_linking,linking.use_ngram=false,results\musique_tune500_tuned_abl_no_ngram_linking_68f150736e,61.05,70.52,29.8,68.83,77.88,42.6,63.57,72.58,34.4,0.002,1.746,1.52,0.2,2.87,0.0252
+no_embedding_linking,linking.embed_tau=null,results\musique_tune500_tuned_abl_no_embedding_linking_208f758721,61.05,70.52,29.8,67.05,77.48,39.4,61.25,71.5,31.4,0.004,2.99,-0.27,-0.6,0.0,0.101
+entity_sum_scoring,graph_fusion.passage_score=entity_sum,results\musique_tune500_tuned_abl_entity_sum_scoring_233b53119f,61.05,70.52,29.8,65.42,72.62,37.0,57.07,65.83,27.0,0.0,3.072,-1.9,-3.5,-0.32,0.0166
+equal_rrf_weights,"graph_fusion.weights=[1.0,1.0]",results\musique_tune500_tuned_abl_equal_rrf_weights_c3683b5a1e,61.05,70.52,29.8,67.67,78.13,40.4,61.45,71.88,31.4,0.0,3.072,0.35,-0.63,1.33,0.5009
+no_title_entities,graph.include_titles=false,results\musique_tune500_tuned_abl_no_title_entities_8aa5998d47,61.05,70.52,29.8,66.07,75.77,37.4,58.5,69.1,27.2,0.0,3.024,-1.25,-2.43,-0.1,0.033
+no_date_entities,"graph.labels=[PERSON,NORP,FAC,ORG,GPE,LOC,PRODUCT,EVENT,WORK_OF_ART,LAW,LANGUAGE]",results\musique_tune500_tuned_abl_no_date_entities_635e652f5e,61.05,70.52,29.8,67.72,78.43,40.6,62.1,72.03,32.2,0.0,2.946,0.4,-0.3,1.12,0.2754
+synonym_edges_0.85,graph.synonym_tau=0.85,results\musique_tune500_tuned_abl_synonym_edges_0.85_fe37055470,61.05,70.52,29.8,67.28,78.28,39.4,61.23,72.15,30.6,0.0,3.072,-0.03,-1.1,1.0,0.9433
+synonym_edges_0.90,graph.synonym_tau=0.9,results\musique_tune500_tuned_abl_synonym_edges_0.90_58bb6d5ffc,61.05,70.52,29.8,67.95,78.62,40.8,61.75,72.38,31.2,0.0,3.072,0.63,-0.23,1.53,0.17
+name_label_keys,graph.entity_key=name_label,results\musique_tune500_tuned_abl_name_label_keys_d8177232f5,61.05,70.52,29.8,66.83,77.42,38.4,61.17,70.72,30.2,0.0,4.21,-0.48,-1.52,0.5,0.3386
+count_mention_weights,graph.mention_weight=count,results\musique_tune500_tuned_abl_count_mention_weights_a8285b0c55,61.05,70.52,29.8,68.92,79.5,42.4,62.45,73.0,32.8,0.0,3.072,1.6,0.53,2.7,0.003
