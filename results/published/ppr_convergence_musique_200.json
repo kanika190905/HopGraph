@@ -1,0 +1,16 @@
+{
+  "alpha": 0.85,
+  "cap": 50,
+  "tol": 1e-06,
+  "k": 10,
+  "n": 200,
+  "mean_l1_to_fixed_point": 1.845521088069454e-05,
+  "max_l1_to_fixed_point": 0.00010616665522685491,
+  "mean_last_step_delta": 3.7985234110996536e-05,
+  "ref_all_converged": true,
+  "ref_mean_iter": 149.825,
+  "graph_topk_mean_overlap": 1.0,
+  "graph_topk_identical_order_frac": 0.995,
+  "fused_topk_mean_overlap": 1.0,
+  "fused_topk_identical_order_frac": 1.0
+}
