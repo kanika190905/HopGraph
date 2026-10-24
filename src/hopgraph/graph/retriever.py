@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, field
+from typing import Any
 
 import numpy as np
 
@@ -79,7 +80,7 @@ class GraphRetriever:
                 link = self.linker.link(query)
         with timer("seed"):
             s, seed_kind = self.seed_vector(link, hybrid)
-        info = {
+        info: dict[str, Any] = {
             "link_path": link.path,
             "linked": [[self.g.entity_keys[e.entity], e.method, round(e.sim, 4)] for e in link.entities],
             "seed_kind": seed_kind,

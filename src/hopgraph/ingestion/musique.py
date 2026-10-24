@@ -78,6 +78,7 @@ def load_musique(
             if not line.strip():
                 continue
             stats.n_records += 1
+            reason: str | None
             try:
                 rec = json.loads(line)
             except json.JSONDecodeError:

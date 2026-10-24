@@ -63,7 +63,7 @@ class DenseRetriever:
     def __init__(self, encoder: Encoder | None, top_k: int = 100):
         self.encoder = encoder
         self.top_k = top_k
-        self.index: faiss.IndexFlatIP | None = None
+        self.index: faiss.Index | None = None
         self.ids: list[str] = []
 
     def build(self, passages: Sequence[Passage], embeddings: np.ndarray | None = None) -> np.ndarray:
@@ -109,9 +109,10 @@ class DenseRetriever:
     def load(cls, in_dir: str | Path, encoder: Encoder | None, top_k: int = 100) -> DenseRetriever:
         d = Path(in_dir)
         r = cls(encoder, top_k)
-        r.index = faiss.read_index(str(d / "faiss.index"))
+        index = faiss.read_index(str(d / "faiss.index"))
+        r.index = index
         r.ids = json.loads((d / "passage_ids.json").read_text(encoding="utf-8"))
-        if r.index.ntotal != len(r.ids):
+        if index.ntotal != len(r.ids):
             raise ValueError("FAISS index size does not match passage_ids.json")
         return r
 

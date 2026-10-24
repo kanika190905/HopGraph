@@ -52,7 +52,7 @@ def git_commit() -> dict[str, str | bool | None]:
 
 
 def environment() -> dict:
-    versions = {}
+    versions: dict[str, str | None] = {}
     for pkg in _PACKAGES:
         try:
             versions[pkg] = metadata.version(pkg)

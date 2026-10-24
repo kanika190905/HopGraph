@@ -166,15 +166,17 @@ def build_graph(
     blocks = sp.csr_matrix(blocks, shape=(P + E, P + E))
     n_syn = 0
     if synonym_pairs:
-        r, c, v = [], [], []
+        srow: list[int] = []
+        scol: list[int] = []
+        sval: list[float] = []
         for i, j, w in synonym_pairs:
             if i == j:
                 continue
-            r += [P + i, P + j]
-            c += [P + j, P + i]
-            v += [w, w]
+            srow += [P + i, P + j]
+            scol += [P + j, P + i]
+            sval += [w, w]
             n_syn += 1
-        S = sp.csr_matrix((v, (r, c)), shape=(P + E, P + E))
+        S = sp.csr_matrix((sval, (srow, scol)), shape=(P + E, P + E))
         S.sum_duplicates()
         S.data = np.minimum(S.data, 1.0)  # duplicates of the same pair must not stack
         blocks = (blocks + S).tocsr()
@@ -217,7 +219,7 @@ def synonym_pairs_from_embeddings(
     index.add(x)
     k = min(top_k + 1, x.shape[0])
     sims, nbrs = index.search(x, k)
-    pairs = {}
+    pairs: dict[tuple[int, int], float] = {}
     for i in range(x.shape[0]):
         for s, j in zip(sims[i], nbrs[i], strict=True):
             if j < 0 or j == i or s < tau:

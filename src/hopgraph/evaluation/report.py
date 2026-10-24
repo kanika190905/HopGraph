@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -93,27 +94,27 @@ SECONDARY = [("hybrid", "bm25"), ("hybrid", "dense"), ("hybrid_ce", "hybrid"), (
 def bootstrap_table(
     records: list[dict], systems: Sequence[str], ks: Sequence[int], n: int, seed: int,
 ) -> pd.DataFrame:
-    rows = []
+    rows: list[dict[str, Any]] = []
     primary = primary_comparisons(records, systems)
     for a, b in primary:
         r = paired_bootstrap(per_query(records, a, "recall@5"), per_query(records, b, "recall@5"),
                              n=n, seed=seed)
         rows.append({"family": "primary", "a": a, "b": b, "metric": "recall@5", **r.as_dict()})
     adj = holm([r["p_value"] for r in rows])
-    for r, p in zip(rows, adj, strict=True):
-        r["p_holm"] = p
+    for row, p in zip(rows, adj, strict=True):
+        row["p_holm"] = p
     extra_metrics = [f"recall@{k}" for k in ks if k != 5] + ["allgold@5", "rr"]
     for a, b in primary:
         for m in extra_metrics:
-            r = paired_bootstrap(per_query(records, a, m), per_query(records, b, m), n=n, seed=seed)
+            res = paired_bootstrap(per_query(records, a, m), per_query(records, b, m), n=n, seed=seed)
             rows.append({"family": "secondary_unadjusted", "a": a, "b": b, "metric": m,
-                         **r.as_dict(), "p_holm": None})
+                         **res.as_dict(), "p_holm": None})
     for a, b in SECONDARY:
         if a in systems and b in systems:
-            r = paired_bootstrap(per_query(records, a, "recall@5"),
-                                 per_query(records, b, "recall@5"), n=n, seed=seed)
+            res = paired_bootstrap(per_query(records, a, "recall@5"),
+                                   per_query(records, b, "recall@5"), n=n, seed=seed)
             rows.append({"family": "secondary_unadjusted", "a": a, "b": b, "metric": "recall@5",
-                         **r.as_dict(), "p_holm": None})
+                         **res.as_dict(), "p_holm": None})
     return pd.DataFrame(rows)
 
 

@@ -59,8 +59,10 @@ class Pipeline:
 
         with t("bm25"):
             b = self.bm25.search(query, cfg.bm25.top_k)
+        encoder = self.dense.encoder
+        assert encoder is not None, "dense retriever needs a query encoder"
         with t("dense_encode"):
-            qv = self.dense.encoder.encode_queries([query])
+            qv = encoder.encode_queries([query])
         with t("dense_search"):
             d = self.dense.search_vectors(qv, cfg.dense.top_k)[0]
         with t("fusion"):

@@ -25,7 +25,7 @@ class BootstrapResult:
 
 
 def paired_bootstrap(
-    a: Sequence[float], b: Sequence[float], n: int = 10_000, seed: int = 0,
+    a: Sequence[float] | np.ndarray, b: Sequence[float] | np.ndarray, n: int = 10_000, seed: int = 0,
     alpha: float = 0.05, chunk: int = 1_000,
 ) -> BootstrapResult:
     """Resample questions with replacement (same indices for both systems).

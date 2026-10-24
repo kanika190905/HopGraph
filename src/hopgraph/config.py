@@ -179,7 +179,7 @@ def _build(cls: type, raw: Any, where: str) -> Any:
     kwargs: dict[str, Any] = {}
     for key, value in raw.items():
         hint = hints[key]
-        if dataclasses.is_dataclass(hint):
+        if isinstance(hint, type) and dataclasses.is_dataclass(hint):
             kwargs[key] = _build(hint, value, f"{where}.{key}")
         else:
             kwargs[key] = _check_type(value, hint, f"{where}.{key}")
