@@ -10,9 +10,12 @@
 HopGraph is an **information-retrieval** project. It returns ranked evidence passages and
 evaluates them against gold supporting passages. It does **not** generate answers.
 
-**Status: Day-3 feasibility spike (2026-10-24).** Baselines, the graph retriever and the
-evaluation harness work and are tested. The results so far come from 200 MuSiQue dev
-questions; see [`docs/day3_decision.md`](docs/day3_decision.md). Nothing here is a final result.
+**Status: Gate 1 retested; Week-2 tuning in progress (2026-10-24).** Baselines, the graph
+retriever and the evaluation harness work and are tested. With **untuned** defaults on 1,000
+MuSiQue dev questions, the graph + cross-encoder pipeline beats hybrid + cross-encoder by
+**+2.4 Recall@5 (95% CI [+1.6, +3.3])**. That is reliable, but below the pre-registered +3
+"Go" bar, so the next step is to check whether the gain survives fair baseline tuning. See
+[`docs/day3_decision.md`](docs/day3_decision.md). Nothing here is a final result.
 
 ## What is (and is not) new
 
