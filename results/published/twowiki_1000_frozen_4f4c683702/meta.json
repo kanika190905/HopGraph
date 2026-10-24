@@ -1,0 +1,48 @@
+{
+  "run_id": "4f4c683702",
+  "name": "twowiki_1000_frozen",
+  "config_hash": "9d87a9fa597a",
+  "data_hash": "46db6323b064",
+  "git": {
+    "commit": "9348fe390cdff0e27e5076e118afa2d18b788885",
+    "dirty": true
+  },
+  "systems": [
+    "bm25",
+    "dense",
+    "hybrid",
+    "hybrid_ce",
+    "graph",
+    "graph_only",
+    "graph_ce"
+  ],
+  "ks": [
+    2,
+    5,
+    10
+  ],
+  "n_questions": 1000,
+  "n_passages": 6222,
+  "threads": {
+    "OMP_NUM_THREADS": 8,
+    "MKL_NUM_THREADS": 8,
+    "OPENBLAS_NUM_THREADS": 8,
+    "NUMEXPR_NUM_THREADS": 8,
+    "torch_threads": 8,
+    "faiss_threads": 8
+  },
+  "overrides": [],
+  "bootstrap_n": 10000,
+  "bootstrap_seed": 0,
+  "started": "2026-10-25T02:13:44",
+  "load_seconds": {
+    "encoder_load_s": 5.734,
+    "index_load_s": 0.077,
+    "reranker_load_s": 0.113,
+    "graph_load_s": 0.415
+  },
+  "rss_after_load_mb": 897.7,
+  "quality_pass_seconds": 4531.74,
+  "peak_rss_mb": 1404.7,
+  "finished": "2026-10-25T03:29:23"
+}

@@ -73,6 +73,11 @@ hybrid + cross-encoder pipeline's latency (1,396 of 1,416 ms).
 only on train. The tuning script refuses non-train data. The oracle router computes the upper
 bound first: with the cross-encoder, the graph stage is 2.6% of latency, so routing cannot pay off.
 
+**Does it generalize?** I froze the MuSiQue-train settings and ran 2WikiMultiHopQA once. The
+graph gain grew (+5.2 R@5 reranked; +7.8 without the reranker). The MS MARCO cross-encoder
+did not transfer: +0.2 on hybrid, −2.4 on the graph list. A component tuned on one domain
+can silently hurt in another, which is why I report every system separately.
+
 **Paired bootstrap?** Resample questions with replacement and recompute mean(A) − mean(B) on
 the same resampled questions, 10,000 times. Pairing cancels question difficulty. The
 percentile interval is the 95% CI, and Holm adjusts the family of primary tests.
@@ -90,5 +95,5 @@ is a plan.
 
 ## Resume bullets (filled only with measured numbers)
 
-- Built an LLM-free multi-hop retrieval system (spaCy entity graph, SciPy sparse Personalized PageRank, RRF fusion) that improved MuSiQue Recall@5 by **+3.9 points (95% CI [+2.8, +5.0])** over a tuned BM25 + dense + cross-encoder baseline, running on a CPU laptop at **65 ms** mean latency without a reranker.
+- Built an LLM-free multi-hop retrieval system (spaCy entity graph, SciPy sparse Personalized PageRank, RRF fusion) that improved MuSiQue Recall@5 by **+3.9 points (95% CI [+2.8, +5.0])** over a tuned BM25 + dense + cross-encoder baseline, and by **+5.2 [+4.3, +6.1]** on 2WikiMultiHopQA with no re-tuning, running on a CPU laptop at **65 ms** mean latency without a reranker.
 - Developed a reproducible evaluation harness with paired-bootstrap intervals and Holm correction, per-stage p50/p95 latency and peak-RSS tracking. Oracle analysis showed that selective graph routing could save at most **16%** of latency in the reranked pipeline, which led me to deprioritize a learned router.

@@ -19,6 +19,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 import pandas as pd  # noqa: E402
+import yaml  # noqa: E402
 
 SURFACE, INK, INK2, MUTED, GRID, AXIS = "#fcfcfb", "#0b0b0b", "#52514e", "#898781", "#e1e0d9", "#c3c2b7"
 SLOTS = ["#2a78d6", "#eb6834", "#1baf7a", "#eda100"]
@@ -41,7 +42,7 @@ def style(ax, title: str, xlabel: str, ylabel: str) -> None:
     ax.tick_params(colors=MUTED, labelsize=8)
 
 
-def recall_at_k_curve(per_query: Path, out: Path, n_label: str) -> None:
+def recall_at_k_curve(per_query: Path, out: Path, n_label: str, ce_depth: int) -> None:
     recs = [json.loads(line) for line in per_query.open(encoding="utf-8")]
     ks = list(range(1, 21))
     fig, ax = plt.subplots(figsize=(6.4, 4.0), facecolor=SURFACE)
@@ -52,9 +53,10 @@ def recall_at_k_curve(per_query: Path, out: Path, n_label: str) -> None:
                     / len(rec["gold"]) for rec in recs]
             ys.append(100 * sum(vals) / len(vals))
         ax.plot(ks, ys, color=color, linewidth=2, label=LABEL[s])
-    style(ax, f"Recall@k on MuSiQue dev ({n_label})", "k (passages retrieved)", "Recall@k (%)")
-    ax.text(20, ax.get_ylim()[0] + 1, "CE reranks the top 20, so each CE curve\nmeets its "
-            "first-stage curve at k = 20", ha="right", va="bottom", fontsize=7, color=MUTED)
+    style(ax, f"Recall@k ({n_label})", "k (passages retrieved)", "Recall@k (%)")
+    note = (f"CE reranks the top {ce_depth}, so each CE curve\nmeets its first-stage curve at k = {ce_depth}"
+            if ce_depth <= 20 else f"CE reranks the top {ce_depth} candidates")
+    ax.text(20, ax.get_ylim()[0] + 1, note, ha="right", va="bottom", fontsize=7, color=MUTED)
     ax.set_xlim(1, 20.5)
     ax.set_xticks([1, 2, 5, 10, 15, 20])
     ax.legend(frameon=False, fontsize=8, labelcolor=INK2, loc="upper left")
@@ -118,11 +120,13 @@ def main() -> None:
     run = Path(a.run)
     meta = json.loads((run / "meta.json").read_text(encoding="utf-8"))
     label = a.label or f"{meta['n_questions']:,} questions"
-    recall_vs_latency(run, run / "recall_vs_latency.png", label)
+    if (run / "latency.csv").exists():  # quality-only runs (--no-latency) have no timing table
+        recall_vs_latency(run, run / "recall_vs_latency.png", label)
     recall_by_hops(run, run / "recall_by_hops.png", label)
     pq = Path(a.per_query or run) / "per_query.jsonl"
     if pq.exists():
-        recall_at_k_curve(pq, run / "recall_at_k.png", label)
+        depth = yaml.safe_load((run / "config.yaml").read_text(encoding="utf-8"))["rerank"]["depth"]
+        recall_at_k_curve(pq, run / "recall_at_k.png", label, int(depth))
     print("figures written to", run)
 
 

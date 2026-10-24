@@ -54,6 +54,42 @@ on this CPU. Adding the cross-encoder on top of the graph then buys only 1.4 mor
 | 3 (304) | 51.8 | 55.3 | 55.8 | 57.7 |
 | 4 (178) | 29.4 | 33.6 | **39.2** | 37.9 |
 
+## Generalization: 2WikiMultiHopQA (dev, 1,000 questions, **no 2Wiki tuning**)
+
+Run `results/published/twowiki_1000_frozen_4f4c683702`. It uses exactly the MuSiQue-train-selected
+settings (`configs/twowiki_1000.yaml`): 10,000 candidates → 6,222 passages, all 2,480 gold IDs
+mapped, a graph of 47,487 nodes. This was a quality-only run (`--no-latency`), because latency
+was measured on MuSiQue. It recorded commit `9348fe3` with a dirty tree: the uncommitted change
+moved `--set` parsing into `config.py` and does not change evaluation behaviour.
+
+| System | R@2 | R@5 | R@10 | AllGold@5 | MRR |
+|---|---|---|---|---|---|
+| bm25 | 55.8 | 65.7 | 70.9 | 32.6 | 93.9 |
+| dense | 63.0 | 69.6 | 72.2 | 38.7 | 98.6 |
+| hybrid | 62.9 | 70.0 | 73.3 | 38.7 | 98.5 |
+| hybrid_ce | 62.5 | 70.3 | 74.4 | 39.2 | 98.4 |
+| graph_only | 61.9 | 76.1 | **92.2** | 47.6 | 92.6 |
+| **graph** | **64.9** | **77.9** | 88.2 | **51.1** | 97.5 |
+| graph_ce | 63.7 | 75.4 | 84.6 | 47.6 | 98.5 |
+
+| Comparison (R@5) | Δ | 95% CI | p (Holm) |
+|---|---|---|---|
+| **graph_ce − hybrid_ce** (pre-registered headline) | **+5.2** | [+4.3, +6.1] | 0.0006 |
+| graph − hybrid | +7.8 | [+6.8, +8.9] | 0.0006 |
+| graph_only − hybrid | +6.1 | [+4.9, +7.3] | 0.0006 |
+| *exploratory:* graph − hybrid_ce | +7.6 | [+6.5, +8.8] | unadjusted |
+| *exploratory:* graph_ce − graph | **−2.4** | [−3.7, −1.2] | unadjusted |
+| *exploratory:* hybrid_ce − hybrid | +0.2 | [−0.7, +1.1] | unadjusted |
+
+By hop count, R@5 for hybrid_ce → graph_ce → graph: 2-hop (n = 760) 75.7 → 80.9 → 83.2;
+4-hop bridge-comparison (n = 240) 53.1 → 58.0 → 60.8.
+
+What this shows:
+
+- **The graph effect transfers** without any 2Wiki tuning, and it is larger than on MuSiQue. 2Wiki questions are built from Wikidata relations between named entities, which suits an NER-based graph.
+- **The MS MARCO cross-encoder does not transfer.** It adds nothing to hybrid (+0.2, n.s.) and *lowers* the graph ranking by 2.4 points. On 2Wiki the best system is the graph *without* a reranker. This is an observation about this particular reranker, not about reranking in general.
+- Recall@10 for graph_only is 92.2 against 73.3 for hybrid: the graph's main contribution is candidate recall.
+
 ## Effect of tuning (same 1,000 dev questions)
 
 | | Untuned defaults (Gate-1 retest) | Tuned on train |
@@ -74,7 +110,7 @@ Pre-registered bar: Δ R@5 ≥ +3 against the strongest baseline, with the CI ex
 The tuned headline is **+3.9 [+2.8, +5.0]**, with the baseline and the graph tuned under the
 same protocol on train data. Scope of the claim:
 
-- **One dataset so far.** The 2WikiMultiHopQA generalization run uses the same frozen settings (no 2Wiki tuning) and is in progress.
+- **It generalizes.** On 2WikiMultiHopQA, with the same frozen settings and no 2Wiki tuning, the headline is +5.2 [+4.3, +6.1] (section above).
 - **Retrieval only.** No answer-generation quality was measured.
 - **Tuning effort was not exactly equal.** The graph grid had 54 configurations, the baseline 35, and three graph settings landed on a grid edge (`docs/tuning.md`).
 
@@ -129,7 +165,8 @@ which must be confirmed on train and then evaluated once on held-out dev questio
 
 ## Limitations
 
-- Results so far cover one dataset (MuSiQue) and 1,000 dev questions. The dev set is also where HippoRAG-style papers report results, and MuSiQue's test labels are not public.
+- Results cover 1,000 dev questions each from MuSiQue and 2Wiki. MuSiQue dev-1,000 has now been evaluated twice (untuned, then tuned), so any further configuration should be confirmed on the 1,417 MuSiQue dev questions that have never been evaluated. MuSiQue's test labels are not public.
+- 2Wiki latency was not measured. Its corpus (6.2k passages) is smaller than MuSiQue's (11.5k), so PPR should be cheaper, but that has not been measured.
 - The headline compares *retrieval*. Whether better passages give better answers was not measured.
 - The 200-question spike overestimated the no-reranker gain (+3.1 at 200, +1.1 at 1,000 untuned). Small-sample estimates should not be trusted.
 - Ablations (synonym edges, specificity, DATE, title entities, n-gram linker, label-aware keys, degree normalization) are not yet run, so it is not yet known which components carry the effect.

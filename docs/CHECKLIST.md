@@ -39,9 +39,11 @@ Last updated: 2026-10-25, after the tuned dev-1,000 evaluation.
 | Metrics, latency (p50/p95, per stage), index time, peak RSS, bootstrap + Holm, oracle + random router | done |
 | Gate 1 | done: **Go** on MuSiQue after train-only tuning (+3.9 [+2.8, +5.0]) |
 | Tuning on a train-derived set | done (`docs/tuning.md`) |
-| 2WikiMultiHopQA (frozen config) | in progress (quality only; latency measured on MuSiQue) |
-| Ablations | pending |
-| Error analysis | partial (graph-distance analysis of misses; `scripts/error_analysis.py`) |
+| 2WikiMultiHopQA (frozen config) | done (quality only): headline +5.2 [+4.3, +6.1] |
+| Ablations | done: 14 single-change variants on the train tuning set (`docs/error_analysis.md` §5) |
+| Error analysis | done (first pass): link noise, graph distance, degree bias (`docs/error_analysis.md`) |
+| Held-out confirmation on the 1,417 unused MuSiQue dev questions | pending |
+| Router (Gate 2) | decision pending: allowed only for the no-reranker pipeline |
 | Interview notes | done (`docs/interview_prep.md`), numbers from MuSiQue only |
 
 ## Known issues

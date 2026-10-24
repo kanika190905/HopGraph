@@ -10,9 +10,9 @@
 HopGraph is an **information-retrieval** project. It returns ranked evidence passages and
 evaluates them against gold supporting passages. It does **not** generate answers.
 
-**Status (2026-10-25): Gate 1 passed on MuSiQue; 2WikiMultiHopQA and ablations pending.**
+**Status (2026-10-25): Gate 1 passed on MuSiQue; the effect transfers to 2WikiMultiHopQA.**
 All systems were tuned on 500 MuSiQue **train** questions and then evaluated once on 1,000
-**dev** questions:
+MuSiQue **dev** questions:
 
 | | Recall@5 | AllGold@5 | mean latency (CPU) |
 |---|---|---|---|
@@ -24,7 +24,11 @@ All systems were tuned on 500 MuSiQue **train** questions and then evaluated onc
 The pre-registered headline, graph + cross-encoder minus hybrid + cross-encoder, is
 **+3.9 Recall@5 (95% CI [+2.8, +5.0])**. Graph-fused retrieval *without* a reranker also
 beats the tuned reranker pipeline (+2.5 [+1.1, +3.9]) at 1/22 of the latency, but that
-comparison was not pre-registered. See [`docs/results.md`](docs/results.md), and
+comparison was not pre-registered. On **2WikiMultiHopQA**, with the same frozen settings and
+no 2Wiki tuning, the headline is **+5.2 [+4.3, +6.1]**. There the cross-encoder does not help
+at all (+0.2, n.s.), and graph-fused without it is best (R@5 77.9 vs 70.3).
+Ablations and error analysis are in [`docs/error_analysis.md`](docs/error_analysis.md).
+See [`docs/results.md`](docs/results.md), and
 [`docs/day3_decision.md`](docs/day3_decision.md) for how the decision evolved from the
 200-question spike. These are retrieval metrics on one dataset; answer quality was not measured.
 

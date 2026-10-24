@@ -1,0 +1,35 @@
+{
+  "dataset": "twowiki",
+  "split": "dev",
+  "source_file": "dev.json",
+  "source_sha256": "48b9bdc69654dc580fda5f935a48b88cb89f11887587310af60d406c8d0111a6",
+  "source_version": "2WikiMultiHopQA official data.zip (Dropbox link in Alab-NII/2wikimultihop README), zip sha256 e8e57c0aafc4a26d41131e320ebb5afb6f2aca86b8a6e6611b08f52033cb7d04",
+  "preprocessing": {
+    "n_questions": 1000,
+    "sample_seed": 0,
+    "dedupe": "sha1(normalize(title) + '\\n' + normalize(text)); normalize = NFKC, collapse whitespace, lowercase",
+    "max_skip_frac": 0.01
+  },
+  "counts": {
+    "records": 12576,
+    "skipped": 0,
+    "skip_reasons": {},
+    "questions": 1000,
+    "candidates": 10000,
+    "passages": 6222,
+    "duplicates_merged": 3778,
+    "gold_passages": 2480,
+    "hops": {
+      "2": 760,
+      "4": 240
+    },
+    "hop_types": {
+      "bridge_comparison": 240,
+      "comparison": 232,
+      "compositional": 413,
+      "inference": 115
+    }
+  },
+  "corpus_hash": "46db6323b064",
+  "build_seconds": 1.428
+}

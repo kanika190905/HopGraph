@@ -1,0 +1,66 @@
+{
+  "graph_config": {
+    "spacy_model": "en_core_web_sm",
+    "labels": [
+      "PERSON",
+      "NORP",
+      "FAC",
+      "ORG",
+      "GPE",
+      "LOC",
+      "PRODUCT",
+      "EVENT",
+      "WORK_OF_ART",
+      "LAW",
+      "LANGUAGE",
+      "DATE"
+    ],
+    "include_titles": true,
+    "entity_key": "name",
+    "mention_weight": "binary",
+    "synonym_tau": null,
+    "synonym_top_k": 10,
+    "batch_size": 128,
+    "n_process": 1
+  },
+  "stats": {
+    "passages": 6222,
+    "entities": 41265,
+    "nodes": 47487,
+    "mention_edges": 69573,
+    "synonym_edges": 0,
+    "undirected_edges": 69573,
+    "adjacency_nnz": 139146,
+    "isolated_passages": 0,
+    "singleton_entities": 34306,
+    "max_entity_degree": 1124,
+    "mean_entities_per_passage": 11.181774349083895,
+    "ner_names": 38214,
+    "names_with_multiple_labels": 1462,
+    "frac_multi_label": 0.03825822996807453
+  },
+  "timings_seconds": {
+    "spacy_load_seconds": 1.1952,
+    "ner_seconds": 34.9982,
+    "entity_embed_seconds": 66.1868,
+    "graph_build_seconds": 0.1433,
+    "transition_seconds": 0.0048
+  },
+  "file_bytes": {
+    "adjacency.npz": 271944,
+    "entities.jsonl": 3246979,
+    "graph_meta.json": 124479,
+    "passage_entity.npz": 136859
+  },
+  "total_bytes": 3780261,
+  "entity_embeddings": "indexes\\twowiki_1000\\graph\\entity_emb_1567567a.npy",
+  "peak_rss_mb": 859.3,
+  "threads": {
+    "OMP_NUM_THREADS": 8,
+    "MKL_NUM_THREADS": 8,
+    "OPENBLAS_NUM_THREADS": 8,
+    "NUMEXPR_NUM_THREADS": 8,
+    "torch_threads": 8,
+    "faiss_threads": 8
+  }
+}
