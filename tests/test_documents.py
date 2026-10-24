@@ -7,7 +7,8 @@ from hopgraph.ingestion.documents import chunk_words, load_documents
 def test_chunk_words_overlap_and_coverage():
     words = [f"w{i}" for i in range(25)]
     chunks = chunk_words(" ".join(words), size=10, overlap=3)
-    assert [c.split()[0] for c in chunks] == ["w0", "w7", "w14"]
+    # step = 7; a window starting at 14 ends at w23, so a 4th window is needed for w24.
+    assert [c.split()[0] for c in chunks] == ["w0", "w7", "w14", "w21"]
     assert chunks[-1].split()[-1] == "w24"
     assert chunks[0].split()[-3:] == chunks[1].split()[:3]
     assert chunk_words("   ", 10, 2) == []
