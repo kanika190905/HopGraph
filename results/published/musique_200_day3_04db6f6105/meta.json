@@ -1,0 +1,53 @@
+{
+  "run_id": "04db6f6105",
+  "name": "musique_200_day3",
+  "config_hash": "daf08b286474",
+  "data_hash": "cab7f1d683b2",
+  "git": {
+    "commit": null,
+    "dirty": null,
+    "note": "git failed: Command '['C:\\\\Users\\\\Kanika\\\\AppData\\\\Local\\\\GitHubDesktop\\\\app-3.6.6\\\\resources\\\\app\\\\git\\\\cmd\\\\git.exe', 'rev-parse', 'HEAD']' returned non-zero exit status 128."
+  },
+  "systems": [
+    "bm25",
+    "dense",
+    "hybrid",
+    "hybrid_ce",
+    "graph",
+    "graph_only",
+    "graph_ce"
+  ],
+  "ks": [
+    2,
+    5,
+    10
+  ],
+  "n_questions": 200,
+  "n_passages": 3235,
+  "threads": {
+    "OMP_NUM_THREADS": 8,
+    "MKL_NUM_THREADS": 8,
+    "OPENBLAS_NUM_THREADS": 8,
+    "NUMEXPR_NUM_THREADS": 8,
+    "torch_threads": 8,
+    "faiss_threads": 8
+  },
+  "overrides": [],
+  "bootstrap_n": 10000,
+  "bootstrap_seed": 0,
+  "started": "2026-10-24T21:51:23",
+  "load_seconds": {
+    "encoder_load_s": 5.883,
+    "index_load_s": 0.081,
+    "reranker_load_s": 0.163,
+    "graph_load_s": 0.426
+  },
+  "rss_after_load_mb": 741.9,
+  "quality_pass_seconds": 272.07,
+  "latency_pass_seconds": 1445.64,
+  "latency_n": 200,
+  "latency_repeats": 5,
+  "warmup": 10,
+  "peak_rss_mb": 1128.0,
+  "finished": "2026-10-24T22:20:18"
+}

@@ -122,38 +122,46 @@ def oracle_router(
 ) -> dict:
     """Perfect per-query routing: run the graph stage only where it raises ``metric``.
 
-    Ties go to ``base`` (graph did not help). Latency uses the per-query medians from
-    the latency pass, so only questions with latency data are included.
+    Ties go to ``base`` (graph did not help). Quality numbers use every question; latency
+    numbers use the per-query medians of the latency pass, so they cover only the timed
+    subset (``n_latency``). The routing decision for each timed question is the same one
+    used in the quality numbers.
     """
+    mb_all = per_query(records, base, metric)
+    mg_all = per_query(records, graph, metric)
+    use_all = mg_all > mb_all
+    out: dict = {
+        "base": base, "graph": graph, "metric": metric, "n_quality": len(records),
+        "graph_helps_frac": float(use_all.mean()),
+        "graph_hurts_frac": float((mg_all < mb_all).mean()),
+        "tie_frac": float((mg_all == mb_all).mean()),
+        f"{metric}_base": float(mb_all.mean()),
+        f"{metric}_always_graph": float(mg_all.mean()),
+        f"{metric}_oracle": float(np.where(use_all, mg_all, mb_all).mean()),
+    }
     lat_by_q = {r["qid"]: r for r in lat}
-    recs = [r for r in records if r["qid"] in lat_by_q]
-    if not recs:
-        return {}
-    mb = per_query(recs, base, metric)
-    mg = per_query(recs, graph, metric)
-    use_graph = mg > mb
-    lb = np.array([lat_by_q[r["qid"]]["system_ms"][base] for r in recs])
-    lg = np.array([lat_by_q[r["qid"]]["system_ms"][graph] for r in recs])
+    timed = [i for i, r in enumerate(records) if r["qid"] in lat_by_q]
+    if not timed:
+        return out
+    use = use_all[timed]
+    lb = np.array([lat_by_q[records[i]["qid"]]["system_ms"][base] for i in timed])
+    lg = np.array([lat_by_q[records[i]["qid"]]["system_ms"][graph] for i in timed])
     graph_stage = np.array([
-        sum(lat_by_q[r["qid"]]["stage_ms"].get(s, 0.0) for s in GRAPH_STAGES) for r in recs
+        sum(lat_by_q[records[i]["qid"]]["stage_ms"].get(s, 0.0) for s in GRAPH_STAGES)
+        for i in timed
     ])
-    oracle_lat = np.where(use_graph, lg, lb)
-    oracle_metric = np.where(use_graph, mg, mb)
-    return {
-        "base": base, "graph": graph, "metric": metric, "n": len(recs),
-        "graph_helps_frac": float(use_graph.mean()),
-        "graph_hurts_frac": float((mg < mb).mean()),
-        "tie_frac": float((mg == mb).mean()),
-        f"{metric}_base": float(mb.mean()),
-        f"{metric}_always_graph": float(mg.mean()),
-        f"{metric}_oracle": float(oracle_metric.mean()),
+    oracle_lat = np.where(use, lg, lb)
+    out.update({
+        "n_latency": len(timed),
+        "graph_helps_frac_latency_subset": float(use.mean()),
         "mean_ms_base": float(lb.mean()),
         "mean_ms_always_graph": float(lg.mean()),
         "mean_ms_oracle": float(oracle_lat.mean()),
         "graph_stage_mean_ms": float(graph_stage.mean()),
         "graph_stage_share_of_always_graph": float(graph_stage.mean() / lg.mean()),
         "oracle_latency_saving_vs_always_graph": float(1 - oracle_lat.mean() / lg.mean()),
-    }
+    })
+    return out
 
 
 def random_router(

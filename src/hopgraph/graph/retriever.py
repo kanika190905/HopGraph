@@ -69,10 +69,14 @@ class GraphRetriever:
         # HippoRAG-1 style: sum of entity scores weighted by mention matrix.
         return np.asarray(self.g.PE @ p[P:]).ravel()
 
-    def retrieve(self, query: str, hybrid: RankedList, timer: StageTimer) -> GraphOutput:
+    def retrieve(
+        self, query: str, hybrid: RankedList, timer: StageTimer, link: LinkResult | None = None,
+    ) -> GraphOutput:
+        """``link`` may be precomputed (tuning grids reuse one linking pass per query)."""
         depth = self.fusion.depth
         with timer("link"):
-            link = self.linker.link(query)
+            if link is None:
+                link = self.linker.link(query)
         with timer("seed"):
             s, seed_kind = self.seed_vector(link, hybrid)
         info = {

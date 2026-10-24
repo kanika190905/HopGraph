@@ -1,0 +1,79 @@
+# Tuning set: 500 MuSiQue-Ans TRAIN questions (seeded sample) with their own merged corpus.
+# Used only for hyper-parameter selection; never for reported results.
+name: musique_tune500
+seed: 0
+data:
+  dataset: musique
+  split: train
+  raw_path: data/raw/musique/musique_ans_v1.0_train.jsonl
+  n_questions: 500
+  sample_seed: 0
+  max_skip_frac: 0.01
+paths:
+  processed_dir: data/processed/musique_tune500
+  index_dir: indexes/musique_tune500
+  results_dir: results
+bm25:
+  k1: 1.5
+  b: 0.75
+  method: lucene
+  stopwords: en
+  stemmer: english
+  top_k: 100
+dense:
+  model: BAAI/bge-small-en-v1.5
+  revision: 5c38ec7c405ec4b44b94cc5a9bb96e735b38267a
+  query_prefix: "Represent this sentence for searching relevant passages: "
+  batch_size: 64
+  max_seq_length: 512
+  top_k: 100
+fusion:
+  k: 60
+  weights: [1.0, 1.0]
+  depth: 100
+rerank:
+  model: cross-encoder/ms-marco-MiniLM-L-6-v2
+  revision: 233902d25c440f23af6f7d6e94d2946bac0bee0a
+  depth: 20
+  batch_size: 32
+  max_length: 512
+graph:
+  spacy_model: en_core_web_sm
+  labels: [PERSON, NORP, FAC, ORG, GPE, LOC, PRODUCT, EVENT, WORK_OF_ART, LAW, LANGUAGE, DATE]
+  include_titles: true
+  entity_key: name
+  mention_weight: binary
+  synonym_tau: null
+  synonym_top_k: 10
+  batch_size: 128
+  n_process: 1
+ppr:
+  alpha: 0.85
+  tol: 1.0e-6
+  max_iter: 50
+linking:
+  use_ner: true
+  use_ngram: true
+  max_ngram: 6
+  embed_tau: 0.85
+  use_noun_chunks: true
+seeding:
+  use_specificity: true
+  passage_seed_m: 5
+  passage_seed_beta: 0.5
+  always_passage_seed: true
+graph_fusion:
+  k: 60
+  weights: [1.0, 1.0]
+  depth: 100
+  passage_score: direct
+eval:
+  ks: [2, 5, 10]
+  systems: [bm25, dense, hybrid, hybrid_ce, graph, graph_only, graph_ce]
+  bootstrap_n: 10000
+  bootstrap_seed: 0
+  latency_n: 200
+  latency_repeats: 5
+  warmup: 10
+  threads: 8
+  rss_limit_gb: 12.0

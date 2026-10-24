@@ -1,0 +1,52 @@
+{
+  "run_id": "369e1e2ead",
+  "name": "musique_1000_gate1",
+  "config_hash": "ff46af12d1e1",
+  "data_hash": "bdf899184f55",
+  "git": {
+    "commit": "d8998fde83441cf2d71252cbc9c3b6a1fdf93549",
+    "dirty": true
+  },
+  "systems": [
+    "bm25",
+    "dense",
+    "hybrid",
+    "hybrid_ce",
+    "graph",
+    "graph_only",
+    "graph_ce"
+  ],
+  "ks": [
+    2,
+    5,
+    10
+  ],
+  "n_questions": 1000,
+  "n_passages": 11524,
+  "threads": {
+    "OMP_NUM_THREADS": 8,
+    "MKL_NUM_THREADS": 8,
+    "OPENBLAS_NUM_THREADS": 8,
+    "NUMEXPR_NUM_THREADS": 8,
+    "torch_threads": 8,
+    "faiss_threads": 8
+  },
+  "overrides": [],
+  "bootstrap_n": 10000,
+  "bootstrap_seed": 0,
+  "started": "2026-10-24T22:31:52",
+  "load_seconds": {
+    "encoder_load_s": 149.083,
+    "index_load_s": 0.118,
+    "reranker_load_s": 0.207,
+    "graph_load_s": 0.671
+  },
+  "rss_after_load_mb": 3476.0,
+  "quality_pass_seconds": 1452.01,
+  "latency_pass_seconds": 1388.43,
+  "latency_n": 200,
+  "latency_repeats": 5,
+  "warmup": 10,
+  "peak_rss_mb": 3885.4,
+  "finished": "2026-10-24T23:21:59"
+}

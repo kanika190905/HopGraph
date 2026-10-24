@@ -1,0 +1,89 @@
+{
+  "strongest_baseline": "hybrid_ce",
+  "primary_comparisons": [
+    [
+      "graph_ce",
+      "hybrid_ce"
+    ],
+    [
+      "graph",
+      "hybrid"
+    ],
+    [
+      "graph_only",
+      "hybrid"
+    ]
+  ],
+  "oracle": [
+    {
+      "base": "hybrid",
+      "graph": "graph",
+      "metric": "recall@5",
+      "n_quality": 200,
+      "graph_helps_frac": 0.08,
+      "graph_hurts_frac": 0.0,
+      "tie_frac": 0.92,
+      "recall@5_base": 0.48666666666666664,
+      "recall@5_always_graph": 0.5175,
+      "recall@5_oracle": 0.5175,
+      "n_latency": 200,
+      "graph_helps_frac_latency_subset": 0.08,
+      "mean_ms_base": 21.850577499135397,
+      "mean_ms_always_graph": 45.72579899977427,
+      "mean_ms_oracle": 23.779985001892783,
+      "graph_stage_mean_ms": 23.829421009868383,
+      "graph_stage_share_of_always_graph": 0.5211373345271894,
+      "oracle_latency_saving_vs_always_graph": 0.47994380585869756,
+      "random_at_oracle_rate": {
+        "rate": 0.08,
+        "recall@5_mean": 0.4891083333333333,
+        "recall@5_p2.5": 0.48666666666666664,
+        "recall@5_p97.5": 0.49416666666666664
+      }
+    },
+    {
+      "base": "hybrid_ce",
+      "graph": "graph_ce",
+      "metric": "recall@5",
+      "n_quality": 200,
+      "graph_helps_frac": 0.085,
+      "graph_hurts_frac": 0.03,
+      "tie_frac": 0.885,
+      "recall@5_base": 0.5466666666666666,
+      "recall@5_always_graph": 0.57125,
+      "recall@5_oracle": 0.5804166666666667,
+      "n_latency": 200,
+      "graph_helps_frac_latency_subset": 0.085,
+      "mean_ms_base": 670.4188044951297,
+      "mean_ms_always_graph": 788.4144625003682,
+      "mean_ms_oracle": 680.166395996348,
+      "graph_stage_mean_ms": 23.829421009868383,
+      "graph_stage_share_of_always_graph": 0.030224484891228455,
+      "oracle_latency_saving_vs_always_graph": 0.1372984282413131,
+      "random_at_oracle_rate": {
+        "rate": 0.085,
+        "recall@5_mean": 0.5486829166666667,
+        "recall@5_p2.5": 0.5441666666666667,
+        "recall@5_p97.5": 0.5545833333333333
+      }
+    }
+  ],
+  "linking": {
+    "link_paths": {
+      "ner+ngram": 114,
+      "ner": 43,
+      "ngram": 21,
+      "embed+ner+ngram": 15,
+      "embed+ngram": 5,
+      "embed": 1,
+      "embed+ner": 1
+    },
+    "seed_kinds": {
+      "entities+passages": 200
+    },
+    "mean_linked_entities": 3.135,
+    "frac_no_entity": 0.0,
+    "ppr_converged_frac": 0.0,
+    "ppr_mean_iter": 50.0
+  }
+}

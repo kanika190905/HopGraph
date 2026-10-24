@@ -1,0 +1,13 @@
+{
+  "passages": 3235,
+  "index_seconds": 0.24,
+  "peak_rss_mb": 72.8,
+  "disk_bytes": 1721302,
+  "params": {
+    "k1": 1.5,
+    "b": 0.75,
+    "method": "lucene",
+    "stopwords": "en",
+    "stemmer": "english"
+  }
+}

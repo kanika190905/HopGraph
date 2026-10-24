@@ -1,0 +1,66 @@
+{
+  "graph_config": {
+    "spacy_model": "en_core_web_sm",
+    "labels": [
+      "PERSON",
+      "NORP",
+      "FAC",
+      "ORG",
+      "GPE",
+      "LOC",
+      "PRODUCT",
+      "EVENT",
+      "WORK_OF_ART",
+      "LAW",
+      "LANGUAGE",
+      "DATE"
+    ],
+    "include_titles": true,
+    "entity_key": "name",
+    "mention_weight": "binary",
+    "synonym_tau": null,
+    "synonym_top_k": 10,
+    "batch_size": 128,
+    "n_process": 1
+  },
+  "stats": {
+    "passages": 3235,
+    "entities": 21268,
+    "nodes": 24503,
+    "mention_edges": 35952,
+    "synonym_edges": 0,
+    "undirected_edges": 35952,
+    "adjacency_nnz": 71904,
+    "isolated_passages": 0,
+    "singleton_entities": 17939,
+    "max_entity_degree": 369,
+    "mean_entities_per_passage": 11.113446676970634,
+    "ner_names": 19774,
+    "names_with_multiple_labels": 615,
+    "frac_multi_label": 0.031101446343683625
+  },
+  "timings_seconds": {
+    "spacy_load_seconds": 1.5768,
+    "ner_seconds": 21.2553,
+    "entity_embed_seconds": 34.4505,
+    "graph_build_seconds": 0.1314,
+    "transition_seconds": 0.0037
+  },
+  "file_bytes": {
+    "adjacency.npz": 139148,
+    "entities.jsonl": 1652042,
+    "graph_meta.json": 64739,
+    "passage_entity.npz": 70188
+  },
+  "total_bytes": 1926117,
+  "entity_embeddings": "indexes\\musique_200\\graph\\entity_emb_1567567a.npy",
+  "peak_rss_mb": 757.1,
+  "threads": {
+    "OMP_NUM_THREADS": 8,
+    "MKL_NUM_THREADS": 8,
+    "OPENBLAS_NUM_THREADS": 8,
+    "NUMEXPR_NUM_THREADS": 8,
+    "torch_threads": 8,
+    "faiss_threads": 8
+  }
+}

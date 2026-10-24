@@ -70,7 +70,9 @@ def load_musique(
     path = Path(path)
     stats = LoadStats(skip_reasons={})
     assert stats.skip_reasons is not None
-    valid: list[dict] = []
+    # Pass 1: validate every record (for the skip-rate check) but keep only line numbers,
+    # so sampling a few hundred questions from the 241 MB train file stays memory-light.
+    valid: list[int] = []
     with path.open(encoding="utf-8") as f:
         for line_no, line in enumerate(f, 1):
             if not line.strip():
@@ -87,7 +89,7 @@ def load_musique(
                 stats.skip_reasons[reason] = stats.skip_reasons.get(reason, 0) + 1
                 log.warning("skipping line %d: %s", line_no, reason)
                 continue
-            valid.append(rec)
+            valid.append(line_no)
 
     if stats.n_records == 0:
         raise DataError(f"{path}: no records")
@@ -100,7 +102,15 @@ def load_musique(
 
     order = list(range(len(valid)))
     random.Random(seed).shuffle(order)
-    selected = [valid[i] for i in (order[:n] if n is not None else order)]
+    chosen = [valid[i] for i in (order[:n] if n is not None else order)]
+    # Pass 2: parse only the chosen lines, then restore the sampled order.
+    wanted = set(chosen)
+    by_line: dict[int, dict] = {}
+    with path.open(encoding="utf-8") as f:
+        for line_no, line in enumerate(f, 1):
+            if line_no in wanted:
+                by_line[line_no] = json.loads(line)
+    selected = [by_line[ln] for ln in chosen]
     stats.n_selected = len(selected)
 
     candidates: list[RawCandidate] = []
