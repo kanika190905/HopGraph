@@ -1,0 +1,15 @@
+[
+  {"_id": "a1", "type": "compositional", "question": "Who is the mother of the director of film Parasite?", "answer": "Kim", "evidences": [],
+   "supporting_facts": [["Parasite (2019 film)", 0], ["Bong Joon-ho", 1]],
+   "context": [["Parasite (2019 film)", ["Parasite is a 2019 film.", "It was directed by Bong Joon-ho."]],
+               ["Bong Joon-ho", ["Bong Joon-ho is a director.", "His mother is Kim."]],
+               ["Seoul", ["Seoul is a city."]],
+               ["Seoul", ["Seoul is a city."]]]},
+  {"_id": "b2", "type": "comparison", "question": "Which was founded first, IIT Kharagpur or Stanford University?", "answer": "Stanford University", "evidences": [],
+   "supporting_facts": [["IIT Kharagpur", 0], ["Stanford University", 0]],
+   "context": [["IIT Kharagpur", ["IIT Kharagpur held its first session in 1951."]],
+               ["Stanford University", ["Stanford University was founded in 1885."]],
+               ["Bong Joon-ho", ["Bong Joon-ho is a director.", "His mother is Kim."]]]},
+  {"_id": "c3", "type": "inference", "question": "  ", "answer": "", "evidences": [],
+   "supporting_facts": [["X", 0]], "context": [["X", ["x"]]]}
+]

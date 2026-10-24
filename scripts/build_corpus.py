@@ -18,6 +18,13 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 from hopgraph.config import load_config  # noqa: E402
 from hopgraph.ingestion.corpus import corpus_hash, file_sha256, save_corpus  # noqa: E402
 from hopgraph.ingestion.musique import load_musique  # noqa: E402
+from hopgraph.ingestion.twowiki import load_twowiki  # noqa: E402
+
+SOURCES = {
+    "musique": "MuSiQue v1.0 (musique_ans), HF mirror dgslibisey/MuSiQue@c8f4f8c9",
+    "twowiki": "2WikiMultiHopQA official data.zip (Dropbox link in Alab-NII/2wikimultihop README), "
+               "zip sha256 e8e57c0aafc4a26d41131e320ebb5afb6f2aca86b8a6e6611b08f52033cb7d04",
+}
 from hopgraph.runinfo import setup_logging  # noqa: E402
 
 log = logging.getLogger("build_corpus")
@@ -33,11 +40,12 @@ def main() -> None:
     raw = Path(cfg.data.raw_path)
     if not raw.exists():
         sys.exit(f"raw data not found: {raw}. See docs/data.md for download instructions.")
-    if cfg.data.dataset != "musique":
-        sys.exit(f"dataset {cfg.data.dataset!r} is not supported yet")
+    loaders = {"musique": load_musique, "twowiki": load_twowiki}
+    if cfg.data.dataset not in loaders:
+        sys.exit(f"dataset {cfg.data.dataset!r} is not supported; choose from {sorted(loaders)}")
 
     t0 = time.perf_counter()
-    passages, questions, stats = load_musique(
+    passages, questions, stats = loaders[cfg.data.dataset](
         raw, n=cfg.data.n_questions, seed=cfg.data.sample_seed, split=cfg.data.split,
         max_skip_frac=cfg.data.max_skip_frac,
     )
@@ -50,7 +58,7 @@ def main() -> None:
         "split": cfg.data.split,
         "source_file": raw.name,
         "source_sha256": file_sha256(raw),
-        "source_version": "MuSiQue v1.0 (musique_ans), HF mirror dgslibisey/MuSiQue@c8f4f8c9",
+        "source_version": SOURCES[cfg.data.dataset],
         "preprocessing": {
             "n_questions": cfg.data.n_questions, "sample_seed": cfg.data.sample_seed,
             "dedupe": "sha1(normalize(title) + '\\n' + normalize(text)); normalize = NFKC, collapse whitespace, lowercase",
