@@ -36,3 +36,17 @@ Both conditions hold, so v2 is adopted. The locked configuration is `configs/mus
 - **Primary comparisons** (Holm-adjusted, R@5): graph_ce − hybrid_ce (headline), graph − hybrid, graph_only − hybrid.
 - **Pre-registered secondary check:** graph − hybrid_ce (R@5). This was exploratory on dev-1,000 (+2.5 [+1.1, +3.9]); here it is tested as a stated hypothesis, unadjusted.
 - The evaluation runs **once**. Whatever it shows is reported, including a smaller or absent effect. Nothing is tuned afterwards on these questions.
+
+### Step 2 outcome
+
+Run `results/published/musique_heldout1417_heldout_e21b488fc6`, commit `4af7cc4` (clean). 1,417
+questions, 0 overlap with dev-1,000, executed once.
+
+| Pre-registered test | Δ R@5 | 95% CI | Verdict |
+|---|---|---|---|
+| graph_ce − hybrid_ce (headline, Holm) | +3.12 | [+2.15, +4.11] | **confirmed**, ≥ +3 with CI excluding 0 |
+| graph − hybrid (Holm) | +7.32 | [+6.22, +8.45] | confirmed |
+| graph_only − hybrid (Holm) | +4.98 | [+3.68, +6.28] | confirmed |
+| graph − hybrid_ce (secondary, unadjusted) | +3.15 | [+1.80, +4.49] | **confirmed** |
+
+Full tables are in [`results.md`](results.md).

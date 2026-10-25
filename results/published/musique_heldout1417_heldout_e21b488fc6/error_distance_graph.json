@@ -1,0 +1,32 @@
+{
+  "system": "graph",
+  "k": 5,
+  "questions": 1417,
+  "missed_gold": 1607,
+  "graph_distance_from_linked_entities": {
+    "1": 247,
+    "3": 1036,
+    ">3": 324
+  },
+  "mean_corpus_frac_within_1": 0.005142839761843737,
+  "mean_corpus_frac_within_3": 0.3132936154720931,
+  "missed_gold_only_singleton_entities": 2,
+  "missed_gold_no_entity_linked": 12,
+  "by_question_hops": {
+    "2": {
+      "3": 309,
+      ">3": 94,
+      "1": 65
+    },
+    "3": {
+      "3": 383,
+      "1": 117,
+      ">3": 99
+    },
+    "4": {
+      "1": 65,
+      "3": 344,
+      ">3": 131
+    }
+  }
+}

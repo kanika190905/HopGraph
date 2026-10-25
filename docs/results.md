@@ -5,7 +5,68 @@ percentages. Δ is a paired difference in absolute points with a 95% paired-boot
 (10,000 resamples, seed 0). Hardware: AMD Ryzen 7 8840U, 8 threads pinned, 15.3 GB RAM,
 CPU only, Windows 11.*
 
-## Headline (MuSiQue-Ans dev, 1,000 questions, tuned on train)
+## Definitive result: held-out confirmation (MuSiQue-Ans dev, 1,417 never-evaluated questions)
+
+Run `results/published/musique_heldout1417_heldout_e21b488fc6` (commit `4af7cc4`, clean tree).
+These are positions 1,000–2,416 of the seed-0 permutation, with **zero question overlap** with
+dev-1,000. Their 28,326 candidates merge into 14,965 passages; 5,391 of those passages also
+appear in the dev-1,000 corpus because both slices draw on the same Wikipedia paragraphs, but
+none of these questions' labels was ever used. The configuration was locked before the run:
+train-tuned v1 plus the v2 changes (no n-gram linker, count mention weights), adopted on train
+under a pre-registered rule ([`heldout_protocol.md`](heldout_protocol.md)). It was evaluated **once**.
+
+| System | R@2 | R@5 | R@10 | AllGold@5 | MRR | mean ms | p50 ms | p95 ms |
+|---|---|---|---|---|---|---|---|---|
+| bm25 | 32.7 | 42.5 | 49.3 | 9.4 | 69.1 | 0.6 | 0.6 | 0.8 |
+| dense | 36.7 | 48.1 | 55.7 | 15.2 | 74.2 | 19.0 | 18.9 | 21.7 |
+| hybrid | 39.9 | 52.5 | 60.6 | 17.4 | 77.1 | 19.8 | 19.7 | 22.7 |
+| hybrid_ce (top 50) | 43.3 | 56.7 | 64.1 | 22.1 | 82.7 | 1,391 | 1,390 | 1,787 |
+| graph_only | 40.1 | 57.5 | 66.4 | 25.1 | 76.6 | 74.7 | 70.3 | 97.4 |
+| **graph** | 41.5 | **59.9** | **71.1** | 26.4 | 80.7 | **74.7** | 70.3 | 97.4 |
+| graph_ce (top 50) | **44.5** | 59.8 | 70.1 | **27.6** | **83.2** | 1,683 | 1,664 | 2,165 |
+
+| Comparison (R@5) | Δ | 95% CI | p |
+|---|---|---|---|
+| **graph_ce − hybrid_ce** (pre-registered headline, Holm) | **+3.1** | **[+2.2, +4.1]** | 0.0006 |
+| graph − hybrid (Holm) | +7.3 | [+6.2, +8.5] | 0.0006 |
+| graph_only − hybrid (Holm) | +5.0 | [+3.7, +6.3] | 0.0006 |
+| **graph − hybrid_ce** (pre-registered secondary, unadjusted) | **+3.2** | **[+1.8, +4.5]** | 0.0002 |
+| *exploratory:* graph_ce − graph | −0.0 | [−1.2, +1.2] | 0.95 |
+| *exploratory:* hybrid_ce − hybrid | +4.2 | [+3.1, +5.3] | 0.0002 |
+
+Secondary metrics, graph_ce − hybrid_ce: R@2 +1.2 [+0.6, +1.9], R@10 +6.0 [+4.8, +7.3],
+AllGold@5 +5.5 [+4.0, +7.1], MRR +0.6 [−0.2, +1.2]. graph − hybrid_ce: AllGold@5 +4.3 [+2.2, +6.4].
+
+By hop count, R@5 for hybrid_ce → graph_ce → graph: 2-hop (n = 734) 64.9 → 68.9 → 68.1;
+3-hop (n = 456) 55.3 → 56.6 → 56.2; 4-hop (n = 227) 33.4 → 37.2 → **40.5**.
+
+**What the held-out run establishes:**
+
+1. **The headline replicates.** The graph-enhanced reranked pipeline beats the tuned
+   reranked baseline by +3.1 [+2.2, +4.1], above the pre-registered +3 bar, on questions that
+   played no part in any decision. The estimate sits between the two dev-1,000 results (+2.4
+   untuned, +3.9 tuned), which is the shrinkage you would expect once selection effects are removed.
+2. **The cheap pipeline wins.** Graph-fused retrieval *without* any reranker beats tuned
+   hybrid + cross-encoder by +3.2 [+1.8, +4.5] R@5 at **75 ms vs 1,391 ms** mean latency (about
+   19× faster). This was a stated hypothesis before the run, not a post-hoc finding.
+3. With v2, the cross-encoder adds nothing on top of the graph (−0.0 [−1.2, +1.2]) while
+   costing about 1.6 s per query. Reranking still helps the plain hybrid list (+4.2).
+
+Index build at 14,965 passages: BGE embedding 449 s (33.3 passages/s, 1.3 GB peak RSS),
+NER 89 s, entity-name embedding (82,087 names) 129 s, CSR graph (97,052 nodes, 319,872
+non-zeros) 0.5 s. PPR costs 40.5 ms per query. Evaluation peak RSS was 1.51 GB.
+
+Oracle router (held-out): with the cross-encoder, the graph stage is 3.3% of latency and the
+oracle saves 14%, so routing is not worth building there. Without it, the graph stage is 73%,
+the graph helps 23.9% / hurts 5.6% of queries, and the oracle saves 53% (74.7 → 34.9 ms) while
+raising R@5 from 59.9 to 62.1.
+
+---
+
+*The sections below are the **development** history on dev-1,000, which was evaluated twice.
+They are kept for transparency; the held-out section above is the result to cite.*
+
+## Development result (MuSiQue-Ans dev, 1,000 questions, tuned on train)
 
 Run `results/published/musique_1000_tuned_final_45b38b0ff5` (commit `47d9ac5`, clean tree).
 Hyper-parameters for **every** system were selected on 500 MuSiQue **train** questions
@@ -165,7 +226,8 @@ which must be confirmed on train and then evaluated once on held-out dev questio
 
 ## Limitations
 
-- Results cover 1,000 dev questions each from MuSiQue and 2Wiki. MuSiQue dev-1,000 has now been evaluated twice (untuned, then tuned), so any further configuration should be confirmed on the 1,417 MuSiQue dev questions that have never been evaluated. MuSiQue's test labels are not public.
+- MuSiQue dev-1,000 was evaluated twice (untuned, tuned). The held-out 1,417 questions have now been used once, for the locked v2 configuration, so all 2,417 MuSiQue dev questions have been seen. Any future configuration needs fresh data, for example another train-derived split, as MuSiQue's test labels are not public.
+- The 2Wiki results use v1 (with the n-gram linker and binary weights); v2 has not been run on 2Wiki.
 - 2Wiki latency was not measured. Its corpus (6.2k passages) is smaller than MuSiQue's (11.5k), so PPR should be cheaper, but that has not been measured.
 - The headline compares *retrieval*. Whether better passages give better answers was not measured.
 - The 200-question spike overestimated the no-reranker gain (+3.1 at 200, +1.1 at 1,000 untuned). Small-sample estimates should not be trusted.

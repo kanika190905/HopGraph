@@ -42,7 +42,8 @@ Last updated: 2026-10-25, after the tuned dev-1,000 evaluation.
 | 2WikiMultiHopQA (frozen config) | done (quality only): headline +5.2 [+4.3, +6.1] |
 | Ablations | done: 14 single-change variants on the train tuning set (`docs/error_analysis.md` §5) |
 | Error analysis | done (first pass): link noise, graph distance, degree bias (`docs/error_analysis.md`) |
-| Held-out confirmation on the 1,417 unused MuSiQue dev questions | pending |
+| v2 (no n-gram linker + count weights) confirmed on train | done: graph +2.3 [+0.8, +3.8]; graph_ce +0.6 (rule met) |
+| Held-out confirmation on the 1,417 unused MuSiQue dev questions | done, run once: headline +3.1 [+2.2, +4.1]; graph (no CE) − hybrid_ce +3.2 [+1.8, +4.5] |
 | Router (Gate 2) | decision pending: allowed only for the no-reranker pipeline |
 | Interview notes | done (`docs/interview_prep.md`), numbers from MuSiQue only |
 

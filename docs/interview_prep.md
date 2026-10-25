@@ -1,8 +1,14 @@
 # Interview preparation
 
-Every number below comes from `docs/results.md` (MuSiQue dev-1,000, tuned on train). If a
-number changes after the 2Wiki run or the ablations, update it here. Never quote a number
-that is not in a saved run.
+Every number below comes from `docs/results.md`. Headline numbers come from the **held-out**
+MuSiQue run (1,417 questions, evaluated once); the per-stage costs mostly come from the
+dev-1,000 runs. Never quote a number that is not in a saved run.
+
+**The story in one breath.** The 200-question spike was inconclusive (+2.5). The 1,000-question
+retest stayed inconclusive (+2.4). After fair tuning on train data it rose to +3.9 on the same
+dev questions. Two ablation-backed changes were then pre-registered, adopted on train, and
+evaluated once on 1,417 untouched questions, which gave **+3.1 [+2.2, +4.1]**. On held-out data,
+the graph without a reranker beat the tuned reranker pipeline (+3.2 [+1.8, +4.5]) at about 1/19 of the latency.
 
 ## One-line pitch
 
@@ -95,5 +101,5 @@ is a plan.
 
 ## Resume bullets (filled only with measured numbers)
 
-- Built an LLM-free multi-hop retrieval system (spaCy entity graph, SciPy sparse Personalized PageRank, RRF fusion) that improved MuSiQue Recall@5 by **+3.9 points (95% CI [+2.8, +5.0])** over a tuned BM25 + dense + cross-encoder baseline, and by **+5.2 [+4.3, +6.1]** on 2WikiMultiHopQA with no re-tuning, running on a CPU laptop at **65 ms** mean latency without a reranker.
+- Built an LLM-free multi-hop retrieval system (spaCy entity graph, SciPy sparse Personalized PageRank, RRF fusion). On 1,417 held-out MuSiQue questions it improved Recall@5 by **+3.1 points (95% CI [+2.2, +4.1])** over a tuned BM25 + dense + cross-encoder baseline, and **without any reranker it still beat that baseline by +3.2 [+1.8, +4.5] at 75 ms vs 1.4 s** on a CPU laptop. It transferred to 2WikiMultiHopQA with no re-tuning (+5.2 [+4.3, +6.1]).
 - Developed a reproducible evaluation harness with paired-bootstrap intervals and Holm correction, per-stage p50/p95 latency and peak-RSS tracking. Oracle analysis showed that selective graph routing could save at most **16%** of latency in the reranked pipeline, which led me to deprioritize a learned router.

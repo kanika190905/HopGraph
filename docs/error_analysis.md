@@ -94,8 +94,18 @@ not simply harmful, and its net effect needs a direct degree-normalization ablat
 These are single-change ablations with unadjusted CIs, run on 500 train questions without the
 cross-encoder. Interactions were not tested, for example whether the two improvements add up.
 
-## 6. Implications
+## 6. After the v2 change (held-out run)
 
-1. Candidate v2 graph: no n-gram linker + count weights. Confirm the combination on train first.
-2. The untouched part of MuSiQue dev (1,417 questions not in the 1,000-question sample) should serve as a **held-out test** for any v2 configuration. Dev-1,000 has now been inspected twice (untuned, tuned), so a third look would erode its value as an unbiased estimate.
-3. Degree normalization and low-degree-only expansion target the ranking failures in §3.
+The locked v2 configuration (no n-gram linker, count weights) links far fewer entities: 1.83 per
+query on the held-out set, against 3.55 for v1 on dev-1,000. Its seed neighbourhoods are
+correspondingly narrower: within three graph steps lies 31% of the corpus, against 42% for v1.
+Of the 1,621 gold passages graph_ce misses at k = 5 on held-out, 293 directly mention a linked
+entity, 1,010 are three steps away, and 318 are farther or unreachable
+(`results/published/musique_heldout1417_heldout_e21b488fc6/error_distance_graph_ce.json`).
+The held-out set and corpus differ from dev-1,000, so these are descriptive numbers, not a
+controlled comparison.
+
+## 7. Implications
+
+1. Done: v2 (no n-gram linker + count weights) was confirmed on train and then on the 1,417 held-out questions (`docs/heldout_protocol.md`).
+2. Degree normalization and low-degree-only expansion target the ranking failures in §3. Any such change now needs new evaluation data, because all MuSiQue dev questions have been seen.

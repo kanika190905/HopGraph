@@ -1,0 +1,66 @@
+{
+  "graph_config": {
+    "spacy_model": "en_core_web_sm",
+    "labels": [
+      "PERSON",
+      "NORP",
+      "FAC",
+      "ORG",
+      "GPE",
+      "LOC",
+      "PRODUCT",
+      "EVENT",
+      "WORK_OF_ART",
+      "LAW",
+      "LANGUAGE",
+      "DATE"
+    ],
+    "include_titles": true,
+    "entity_key": "name",
+    "mention_weight": "count",
+    "synonym_tau": null,
+    "synonym_top_k": 10,
+    "batch_size": 128,
+    "n_process": 1
+  },
+  "stats": {
+    "passages": 14965,
+    "entities": 82087,
+    "nodes": 97052,
+    "mention_edges": 159936,
+    "synonym_edges": 0,
+    "undirected_edges": 159936,
+    "adjacency_nnz": 319872,
+    "isolated_passages": 0,
+    "singleton_entities": 68147,
+    "max_entity_degree": 1790,
+    "mean_entities_per_passage": 10.687337119946543,
+    "ner_names": 75427,
+    "names_with_multiple_labels": 3220,
+    "frac_multi_label": 0.042690283320296445
+  },
+  "timings_seconds": {
+    "spacy_load_seconds": 1.0644,
+    "ner_seconds": 89.0757,
+    "entity_embed_seconds": 128.7382,
+    "graph_build_seconds": 0.4857,
+    "transition_seconds": 0.0087
+  },
+  "file_bytes": {
+    "adjacency.npz": 732423,
+    "entities.jsonl": 6496732,
+    "graph_meta.json": 299339,
+    "passage_entity.npz": 368796
+  },
+  "total_bytes": 7897290,
+  "entity_embeddings": "indexes\\musique_heldout1417\\graph\\entity_emb_1567567a.npy",
+  "peak_rss_mb": 1079.9,
+  "threads": {
+    "OMP_NUM_THREADS": 8,
+    "MKL_NUM_THREADS": 8,
+    "OPENBLAS_NUM_THREADS": 8,
+    "NUMEXPR_NUM_THREADS": 8,
+    "torch_threads": 8,
+    "faiss_threads": 8
+  }
+}

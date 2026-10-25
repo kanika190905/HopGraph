@@ -10,52 +10,56 @@
 HopGraph is an **information-retrieval** project. It returns ranked evidence passages and
 evaluates them against gold supporting passages. It does **not** generate answers.
 
-**Status (2026-10-25): Gate 1 passed on MuSiQue; the effect transfers to 2WikiMultiHopQA.**
-All systems were tuned on 500 MuSiQue **train** questions and then evaluated once on 1,000
-MuSiQue **dev** questions:
+**Status (2026-10-25): result confirmed on held-out data.** All hyper-parameters were chosen
+on MuSiQue **train** data. The configuration was then locked and evaluated **once** on the
+1,417 MuSiQue-Ans dev questions that no decision had touched:
 
-| | Recall@5 | AllGold@5 | mean latency (CPU) |
+| | Recall@5 | AllGold@5 | mean latency (CPU, 8 threads) |
 |---|---|---|---|
-| Hybrid (BM25 + dense, RRF) | 51.9 | 17.0 | 20 ms |
-| Hybrid + cross-encoder (top 50) | 55.9 | 20.9 | 1,416 ms |
-| **Graph-fused** (+ spaCy entity graph, PPR) | **58.4** | 24.0 | **65 ms** |
-| Graph-fused + cross-encoder | **59.8** | **27.0** | 1,739 ms |
+| Hybrid (BM25 + dense, RRF) | 52.5 | 17.4 | 20 ms |
+| Hybrid + cross-encoder (top 50) | 56.7 | 22.1 | 1,391 ms |
+| **Graph-fused** (+ spaCy entity graph, PPR) | **59.9** | 26.4 | **75 ms** |
+| Graph-fused + cross-encoder | 59.8 | **27.6** | 1,683 ms |
 
-The pre-registered headline, graph + cross-encoder minus hybrid + cross-encoder, is
-**+3.9 Recall@5 (95% CI [+2.8, +5.0])**. Graph-fused retrieval *without* a reranker also
-beats the tuned reranker pipeline (+2.5 [+1.1, +3.9]) at 1/22 of the latency, but that
-comparison was not pre-registered. On **2WikiMultiHopQA**, with the same frozen settings and
-no 2Wiki tuning, the headline is **+5.2 [+4.3, +6.1]**. There the cross-encoder does not help
-at all (+0.2, n.s.), and graph-fused without it is best (R@5 77.9 vs 70.3).
-Ablations and error analysis are in [`docs/error_analysis.md`](docs/error_analysis.md).
-See [`docs/results.md`](docs/results.md), and
-[`docs/day3_decision.md`](docs/day3_decision.md) for how the decision evolved from the
-200-question spike. These are retrieval metrics on one dataset; answer quality was not measured.
+- **Pre-registered headline**, graph + CE vs hybrid + CE: **+3.1 Recall@5, 95% CI [+2.2, +4.1]**.
+- **Pre-registered secondary**, graph-fused *without any reranker* vs tuned hybrid + CE:
+  **+3.2 [+1.8, +4.5]**, at about **19× lower latency**.
+- **Generalization:** on 2WikiMultiHopQA, with MuSiQue-tuned settings and no 2Wiki tuning,
+  the headline is +5.2 [+4.3, +6.1]. The MS MARCO cross-encoder does not help there.
 
-![Recall@5 vs latency](results/published/musique_1000_tuned_final_45b38b0ff5/recall_vs_latency.png)
+The full report is in [`docs/results.md`](docs/results.md), the protocol in
+[`docs/heldout_protocol.md`](docs/heldout_protocol.md), and ablations and error analysis in
+[`docs/error_analysis.md`](docs/error_analysis.md). [`docs/day3_decision.md`](docs/day3_decision.md)
+shows how the decision evolved from the 200-question spike, where the estimate was inconclusive.
+These are retrieval metrics; answer quality was not measured.
+
+![Recall@5 vs latency](results/published/musique_heldout1417_heldout_e21b488fc6/recall_vs_latency.png)
 
 ## What is (and is not) new
 
 Graph retrieval with Personalized PageRank (HippoRAG, HippoRAG 2), LLM-free graph RAG
-(TIGRAG), routing between vanilla and graph RAG (EA-GraphRAG, RÂ²Adapter, SkewRoute), and
+(TIGRAG), routing between vanilla and graph RAG (EA-GraphRAG, R²Adapter, SkewRoute), and
 retrieval-gain-labelled routers (Per-Query Gating of LLM Rerankers) are all **prior work**;
 see [`docs/novelty_review.md`](docs/novelty_review.md). HopGraph's contribution is an
-**engineering study**: a HippoRAG-2-style entityâ€“passage graph built with spaCy NER instead
+**engineering study**: a HippoRAG-2-style entity–passage graph built with spaCy NER instead
 of an LLM, compared at retrieval level against a strong BM25 + dense + RRF + cross-encoder
 baseline, with paired bootstrap intervals, per-stage latency, peak RAM and an
 oracle-routing upper bound, all on a 16 GB CPU laptop.
 
 ## Systems compared
 
+Settings shown are the locked held-out configuration (`configs/musique_heldout1417.yaml`),
+chosen on train data. The untuned defaults appear in `configs/musique_200.yaml`.
+
 | System | Pipeline |
 |---|---|
-| `bm25` | bm25s (k1 = 1.5, b = 0.75, Snowball stemming, English stop words) |
+| `bm25` | bm25s (k1 = 0.9, b = 0.75, Snowball stemming, English stop words) |
 | `dense` | BGE-small-en-v1.5 + FAISS `IndexFlatIP` (exact cosine) |
-| `hybrid` | RRF(BM25, dense), k = 60 |
-| `hybrid_ce` | hybrid â†’ MiniLM-L6 cross-encoder over the top 20 |
-| `graph_only` | link query entities â†’ seed PPR (entities Ã— specificity + top-5 hybrid passages) â†’ rank passage nodes |
-| `graph` | RRF(hybrid, graph_only) |
-| `graph_ce` | graph â†’ cross-encoder over the top 20 |
+| `hybrid` | RRF(BM25, dense), k = 10, dense weight 1.5 |
+| `hybrid_ce` | hybrid → MiniLM-L6 cross-encoder over the top 50 |
+| `graph_only` | link query entities (spaCy NER, embedding fallback, noun chunks) → seed PPR (entities × specificity, plus 25% mass on the top-3 hybrid passages; α = 0.85) on an entity–passage graph with mention-count edge weights → rank passage nodes |
+| `graph` | RRF(hybrid, graph_only) with weights 1 : 2 |
+| `graph_ce` | graph → cross-encoder over the top 50 |
 
 ## Setup (Windows PowerShell, CPU only)
 

@@ -1,0 +1,52 @@
+{
+  "run_id": "e21b488fc6",
+  "name": "musique_heldout1417_heldout",
+  "config_hash": "8bb086acad24",
+  "data_hash": "90140334da4e",
+  "git": {
+    "commit": "4af7cc4bfa71a75fd2709ff12da50983b1a745ad",
+    "dirty": false
+  },
+  "systems": [
+    "bm25",
+    "dense",
+    "hybrid",
+    "hybrid_ce",
+    "graph",
+    "graph_only",
+    "graph_ce"
+  ],
+  "ks": [
+    2,
+    5,
+    10
+  ],
+  "n_questions": 1417,
+  "n_passages": 14965,
+  "threads": {
+    "OMP_NUM_THREADS": 8,
+    "MKL_NUM_THREADS": 8,
+    "OPENBLAS_NUM_THREADS": 8,
+    "NUMEXPR_NUM_THREADS": 8,
+    "torch_threads": 8,
+    "faiss_threads": 8
+  },
+  "overrides": [],
+  "bootstrap_n": 10000,
+  "bootstrap_seed": 0,
+  "started": "2026-10-25T06:12:17",
+  "load_seconds": {
+    "encoder_load_s": 5.725,
+    "index_load_s": 0.095,
+    "reranker_load_s": 0.11,
+    "graph_load_s": 0.504
+  },
+  "rss_after_load_mb": 818.7,
+  "quality_pass_seconds": 4253.46,
+  "latency_pass_seconds": 3059.02,
+  "latency_n": 200,
+  "latency_repeats": 5,
+  "warmup": 10,
+  "peak_rss_mb": 1508.5,
+  "finished": "2026-10-25T08:14:49"
+}

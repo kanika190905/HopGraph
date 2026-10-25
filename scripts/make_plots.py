@@ -80,8 +80,8 @@ def recall_vs_latency(run: Path, out: Path, n_label: str) -> None:
     ax.scatter([], [], s=64, color=SLOTS[0], label="Baselines")
     ax.scatter([], [], s=64, color=SLOTS[1], label="Graph-enhanced")
     ax.set_xscale("log")
-    style(ax, f"Recall@5 vs mean query latency ({n_label}, CPU, 8 threads)",
-          "mean latency per query (ms, log scale)", "Recall@5 (%)")
+    style(ax, f"Recall@5 vs latency\n{n_label}",
+          "mean latency per query (ms, log scale; CPU, 8 threads)", "Recall@5 (%)")
     ax.legend(frameon=False, fontsize=8, labelcolor=INK2, loc="lower right")
     fig.tight_layout()
     fig.savefig(out, dpi=160, facecolor=SURFACE)
