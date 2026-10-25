@@ -12,9 +12,9 @@ Last updated: 2026-10-25, after the tuned dev-1,000 evaluation.
 | Python env (3.12.10 venv; 3.11 not installed) | done | `requirements.lock.txt`; ADR 0001 §1 |
 | CPU-only PyTorch (2.14.1+cpu) | done | `torch.cuda.is_available() == False` |
 | Native Windows install (faiss-cpu, spaCy, bm25s) | done | no WSL needed |
-| Git repository | done | Git is **not on PATH**; GitHub Desktop's bundled git was used. Install Git for Windows, or set `GIT_EXECUTABLE`. |
+| Git repository | done | public at https://github.com/kanika190905/HopGraph, published from GitHub Desktop on 2026-10-25 (17 commits, `main` at `3ae5f72`). Git is **not on PATH**; set `GIT_EXECUTABLE` for run metadata. The stored command-line token lacks the `workflow` scope, so changes to `.github/workflows/` must be pushed from GitHub Desktop. |
 | ruff, mypy (whole package) | done | both clean |
-| GitHub Actions CI (Ubuntu + Windows, no torch/models) | partial | the same dependency set passes ruff + mypy + 78 tests locally in a torch-free venv; **not yet run on GitHub** (no remote) |
+| GitHub Actions CI (Ubuntu + Windows, no torch/models) | done | [first run](https://github.com/kanika190905/HopGraph/actions/runs/40218053547) on `3ae5f72`: both jobs passed every step (lint, type check, tests) |
 | Makefile + `scripts/tasks.py` | done | `tasks.py reproduce` ran end to end |
 | Fresh-clone reproduction | pending | |
 

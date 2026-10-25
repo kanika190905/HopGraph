@@ -1,5 +1,7 @@
 # HopGraph
 
+[![ci](https://github.com/kanika190905/HopGraph/actions/workflows/ci.yml/badge.svg)](https://github.com/kanika190905/HopGraph/actions/workflows/ci.yml)
+
 **An LLM-free, CPU-first study of graph-enhanced multi-hop passage retrieval and adaptive retrieval costs.**
 
 > On a CPU-only laptop, does an LLM-free entity graph with Personalized PageRank improve
