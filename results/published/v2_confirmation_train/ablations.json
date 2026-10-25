@@ -1,0 +1,42 @@
+[
+  {
+    "variant": "reference",
+    "overrides": "",
+    "run": "results\\musique_tune500_tuned_abl_reference_06193453d7",
+    "hybrid_recall@5": 61.05,
+    "hybrid_recall@10": 70.52,
+    "hybrid_allgold@5": 29.8,
+    "graph_recall@5": 67.32,
+    "graph_recall@10": 77.72,
+    "graph_allgold@5": 39.8,
+    "graph_ce_recall@5": 69.8,
+    "graph_ce_recall@10": 78.67,
+    "graph_ce_allgold@5": 44.4,
+    "frac_no_entity": 0.0,
+    "mean_linked_entities": 3.072
+  },
+  {
+    "variant": "v2_no_ngram_count",
+    "overrides": "linking.use_ngram=false; graph.mention_weight=count",
+    "run": "results\\musique_tune500_tuned_abl_v2_no_ngram_count_167392b806",
+    "hybrid_recall@5": 61.05,
+    "hybrid_recall@10": 70.52,
+    "hybrid_allgold@5": 29.8,
+    "graph_recall@5": 69.65,
+    "graph_recall@10": 79.13,
+    "graph_allgold@5": 43.8,
+    "graph_ce_recall@5": 70.4,
+    "graph_ce_recall@10": 79.4,
+    "graph_ce_allgold@5": 45.2,
+    "frac_no_entity": 0.002,
+    "mean_linked_entities": 1.746,
+    "d_graph_r5": 2.33,
+    "ci_low": 0.83,
+    "ci_high": 3.82,
+    "p": 0.0022,
+    "ce_d_graph_r5": 0.6,
+    "ce_ci_low": -0.3,
+    "ce_ci_high": 1.5,
+    "ce_p": 0.2006
+  }
+]

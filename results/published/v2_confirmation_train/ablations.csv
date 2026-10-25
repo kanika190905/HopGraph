@@ -1,0 +1,3 @@
+variant,overrides,run,hybrid_recall@5,hybrid_recall@10,hybrid_allgold@5,graph_recall@5,graph_recall@10,graph_allgold@5,graph_ce_recall@5,graph_ce_recall@10,graph_ce_allgold@5,frac_no_entity,mean_linked_entities,d_graph_r5,ci_low,ci_high,p,ce_d_graph_r5,ce_ci_low,ce_ci_high,ce_p
+reference,,results\musique_tune500_tuned_abl_reference_06193453d7,61.05,70.52,29.8,67.32,77.72,39.8,69.8,78.67,44.4,0.0,3.072,,,,,,,,
+v2_no_ngram_count,linking.use_ngram=false; graph.mention_weight=count,results\musique_tune500_tuned_abl_v2_no_ngram_count_167392b806,61.05,70.52,29.8,69.65,79.13,43.8,70.4,79.4,45.2,0.002,1.746,2.33,0.83,3.82,0.0022,0.6,-0.3,1.5,0.2006
