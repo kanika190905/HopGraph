@@ -44,9 +44,11 @@ VARIANTS: dict[str, list[str]] = {
     "synonym_edges_0.90": ["graph.synonym_tau=0.9"],
     "name_label_keys": ["graph.entity_key=name_label"],
     "count_mention_weights": ["graph.mention_weight=count"],
+    # Combination of the two single changes that helped (docs/heldout_protocol.md, step 1).
+    "v2_no_ngram_count": ["linking.use_ngram=false", "graph.mention_weight=count"],
 }
 REBUILD_PREFIXES = ("graph.",)
-SYSTEMS = "eval.systems=[hybrid,graph,graph_only]"
+DEFAULT_SYSTEMS = "[hybrid,graph,graph_only]"
 
 
 def run(args: list[str]) -> str:
@@ -63,11 +65,15 @@ def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--config", required=True)
     ap.add_argument("--only", nargs="*", default=None)
+    ap.add_argument("--systems", default=DEFAULT_SYSTEMS, help="e.g. [hybrid,graph,graph_ce]")
+    ap.add_argument("--out-name", default=None, help="results subdirectory (default ablations_<name>)")
     a = ap.parse_args()
     cfg = load_config(a.config)
     if cfg.data.split != "train":
         sys.exit("ablations that inform design decisions must run on train-derived data")
-    out_dir = ROOT / cfg.paths.results_dir / f"ablations_{cfg.name}"
+    systems_set = f"eval.systems={a.systems}"
+    systems = [s.strip() for s in a.systems.strip("[]").split(",")]
+    out_dir = ROOT / cfg.paths.results_dir / (a.out_name or f"ablations_{cfg.name}")
     out_dir.mkdir(parents=True, exist_ok=True)
     names = a.only or list(VARIANTS)
     run(["scripts/build_bm25.py", "--config", a.config])  # tuned BM25 params need their own index
@@ -77,7 +83,7 @@ def main() -> None:
         if any(s.startswith(REBUILD_PREFIXES) for s in sets):
             run(["scripts/build_graph.py", "--config", a.config, "--set", *sets])
         run_dirs[name] = run(["scripts/run_eval.py", "--config", a.config, "--tag", f"abl_{name}",
-                              "--no-latency", "--set", SYSTEMS, *sets])
+                              "--no-latency", "--set", systems_set, *sets])
 
     ref = read_jsonl(ROOT / run_dirs["reference"] / "per_query.jsonl") if "reference" in run_dirs else None
     rows = []
@@ -85,23 +91,30 @@ def main() -> None:
         recs = read_jsonl(ROOT / run_dirs[name] / "per_query.jsonl")
         summ = json.loads((ROOT / run_dirs[name] / "summary.json").read_text(encoding="utf-8"))
         row = {"variant": name, "overrides": "; ".join(VARIANTS[name]), "run": run_dirs[name]}
-        for s in ("hybrid", "graph", "graph_only"):
+        for s in systems:
             for m in ("recall@5", "recall@10", "allgold@5"):
                 row[f"{s}_{m}"] = round(100 * float(per_query(recs, s, m).mean()), 2)
         row["frac_no_entity"] = summ.get("linking", {}).get("frac_no_entity")
         row["mean_linked_entities"] = summ.get("linking", {}).get("mean_linked_entities")
         if ref is not None and name != "reference":
             assert [r["qid"] for r in recs] == [r["qid"] for r in ref]
-            b = paired_bootstrap(per_query(recs, "graph", "recall@5"), per_query(ref, "graph", "recall@5"),
-                                 n=10_000, seed=0)
-            row.update({"d_graph_r5": round(100 * b.diff, 2), "ci_low": round(100 * b.ci_low, 2),
-                        "ci_high": round(100 * b.ci_high, 2), "p": round(b.p_value, 4)})
+            for s, prefix in (("graph", ""), ("graph_ce", "ce_")):
+                if s not in systems:
+                    continue
+                b = paired_bootstrap(per_query(recs, s, "recall@5"), per_query(ref, s, "recall@5"),
+                                     n=10_000, seed=0)
+                row.update({f"{prefix}d_graph_r5": round(100 * b.diff, 2),
+                            f"{prefix}ci_low": round(100 * b.ci_low, 2),
+                            f"{prefix}ci_high": round(100 * b.ci_high, 2), f"{prefix}p": round(b.p_value, 4)})
         rows.append(row)
     df = pd.DataFrame(rows)
     df.to_csv(out_dir / "ablations.csv", index=False)
     (out_dir / "ablations.json").write_text(json.dumps(rows, indent=2), encoding="utf-8")
-    print(df[["variant", "graph_recall@5", "d_graph_r5", "ci_low", "ci_high", "graph_recall@10",
-              "graph_allgold@5"]].to_string(index=False))
+    cols = ["variant", "graph_recall@5", "d_graph_r5", "ci_low", "ci_high", "graph_recall@10",
+            "graph_allgold@5"]
+    if "graph_ce" in systems:
+        cols += ["graph_ce_recall@5", "ce_d_graph_r5", "ce_ci_low", "ce_ci_high"]
+    print(df[[c for c in cols if c in df.columns]].to_string(index=False))
 
 
 if __name__ == "__main__":

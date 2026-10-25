@@ -27,8 +27,9 @@ class DataConfig:
     dataset: str = "musique"  # musique | twowiki | fixture
     split: str = "dev"
     raw_path: str = "data/raw/musique/musique_ans_v1.0_dev.jsonl"
-    n_questions: int | None = 200  # None = all
+    n_questions: int | None = 200  # None = all (after offset)
     sample_seed: int = 0
+    offset: int = 0  # skip the first `offset` questions of the seeded permutation (held-out splits)
     max_skip_frac: float = 0.01
 
 

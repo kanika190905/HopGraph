@@ -47,7 +47,7 @@ def main() -> None:
     t0 = time.perf_counter()
     passages, questions, stats = loaders[cfg.data.dataset](
         raw, n=cfg.data.n_questions, seed=cfg.data.sample_seed, split=cfg.data.split,
-        max_skip_frac=cfg.data.max_skip_frac,
+        max_skip_frac=cfg.data.max_skip_frac, offset=cfg.data.offset,
     )
     out = Path(cfg.paths.processed_dir)
     save_corpus(out, passages, questions)
@@ -61,6 +61,7 @@ def main() -> None:
         "source_version": SOURCES[cfg.data.dataset],
         "preprocessing": {
             "n_questions": cfg.data.n_questions, "sample_seed": cfg.data.sample_seed,
+            "offset": cfg.data.offset,
             "dedupe": "sha1(normalize(title) + '\\n' + normalize(text)); normalize = NFKC, collapse whitespace, lowercase",
             "max_skip_frac": cfg.data.max_skip_frac,
         },

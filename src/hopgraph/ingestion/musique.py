@@ -61,11 +61,13 @@ def load_musique(
     seed: int = 0,
     split: str = "dev",
     max_skip_frac: float = 0.01,
+    offset: int = 0,
 ) -> tuple[list[Passage], list[Question], LoadStats]:
     """Load ``n`` questions (seeded sample) and their merged, deduplicated corpus.
 
-    Sampling is a seeded permutation of the valid records, then the first ``n``,
-    so smaller subsets are nested inside larger ones for the same seed.
+    Sampling is a seeded permutation of the valid records, then positions
+    ``[offset, offset + n)``. With offset 0, smaller subsets are nested inside larger
+    ones; a non-zero offset gives a disjoint held-out slice of the same permutation.
     """
     path = Path(path)
     stats = LoadStats(skip_reasons={})
@@ -103,7 +105,9 @@ def load_musique(
 
     order = list(range(len(valid)))
     random.Random(seed).shuffle(order)
-    chosen = [valid[i] for i in (order[:n] if n is not None else order)]
+    if not 0 <= offset < len(order):
+        raise DataError(f"offset {offset} out of range for {len(order)} valid records")
+    chosen = [valid[i] for i in order[offset:(offset + n) if n is not None else None]]
     # Pass 2: parse only the chosen lines, then restore the sampled order.
     wanted = set(chosen)
     by_line: dict[int, dict] = {}

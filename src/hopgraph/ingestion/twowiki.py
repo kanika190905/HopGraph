@@ -47,9 +47,9 @@ def _record_problem(rec: object) -> str | None:
 
 def load_twowiki(
     path: str | Path, n: int | None = None, seed: int = 0, split: str = "dev",
-    max_skip_frac: float = 0.01,
+    max_skip_frac: float = 0.01, offset: int = 0,
 ) -> tuple[list[Passage], list[Question], LoadStats]:
-    """Seeded sample of ``n`` questions plus their merged, deduplicated corpus."""
+    """Seeded sample (positions ``[offset, offset + n)``) plus its merged, deduplicated corpus."""
     path = Path(path)
     stats = LoadStats(skip_reasons={})
     assert stats.skip_reasons is not None
@@ -76,7 +76,9 @@ def load_twowiki(
 
     order = list(range(len(valid)))
     random.Random(seed).shuffle(order)
-    selected = [valid[i] for i in (order[:n] if n is not None else order)]
+    if not 0 <= offset < len(order):
+        raise DataError(f"offset {offset} out of range for {len(order)} valid records")
+    selected = [valid[i] for i in order[offset:(offset + n) if n is not None else None]]
     stats.n_selected = len(selected)
 
     candidates: list[RawCandidate] = []

@@ -36,6 +36,16 @@ def test_sampling_is_seeded_and_nested(tiny_path):
     assert [q.id for q in a] == [q.id for q in b][:2]
 
 
+def test_offset_gives_disjoint_heldout_slice(tiny_path):
+    _, first, _ = load_musique(tiny_path, n=2, seed=1)
+    _, rest, _ = load_musique(tiny_path, n=None, seed=1, offset=2)
+    _, everything, _ = load_musique(tiny_path, n=None, seed=1)
+    assert {q.id for q in first}.isdisjoint({q.id for q in rest})
+    assert [q.id for q in first + rest] == [q.id for q in everything]
+    with pytest.raises(DataError):
+        load_musique(tiny_path, offset=5)
+
+
 def test_hash_normalization():
     assert passage_hash("Seoul", "Seoul  is\nthe capital.") == passage_hash(" seoul", "Seoul is the capital.")
     assert passage_hash("Seoul", "x") != passage_hash("Busan", "x")
